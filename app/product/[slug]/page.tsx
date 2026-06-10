@@ -28,9 +28,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${product.name} - Sisi`,
       description: product.shortDescription || product.description.slice(0, 160),
-      images: product.image ? [{ url: product.image, alt: product.name }] : [],
-      url: `/product/${product.slug}`,
+      images: product.image ? [{
+        url: product.image,
+        alt: product.name,
+        width: 600,
+        height: 600,
+        type: 'image/jpeg',
+      }] : [],
+      url: `${BASE_URL}/product/${product.slug}`,
+      siteName: 'Sisi',
+      locale: 'es_PE',
       type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${product.name} - Sisi`,
+      description: product.shortDescription || product.description.slice(0, 160),
+      images: product.image ? [product.image] : [],
     },
     other: {
       'product:price:amount': product.price.toString(),
