@@ -17,7 +17,7 @@
       "static/chunks/110-3887aae0a18ff57f.js",
       "static/chunks/300-085b8d6fb4ba4b8d.js",
       "static/chunks/52-ff5a2f0eaeae7489.js",
-      "static/chunks/app/layout-11b60f1fd53d6e2d.js"
+      "static/chunks/app/layout-7ed5b5ef90ff9fe5.js"
     ],
     "/api/products/route": [
       "static/chunks/webpack-c977ff06ee075525.js",
@@ -42,6 +42,14 @@
       "static/chunks/110-3887aae0a18ff57f.js",
       "static/chunks/52-ff5a2f0eaeae7489.js",
       "static/chunks/app/page-985faff4d30f3209.js"
+    ],
+    "/nosotros/page": [
+      "static/chunks/webpack-c977ff06ee075525.js",
+      "static/chunks/4bd1b696-c023c6e3521b1417.js",
+      "static/chunks/255-4f84124391a7dac4.js",
+      "static/chunks/main-app-9ec8add9c2b5f405.js",
+      "static/chunks/619-ba102abea3e3d0e4.js",
+      "static/chunks/app/nosotros/page-f7b90891f0cd3ea0.js"
     ],
     "/lista-de-deseos/page": [
       "static/chunks/webpack-c977ff06ee075525.js",
@@ -69,14 +77,6 @@
       "static/chunks/255-4f84124391a7dac4.js",
       "static/chunks/main-app-9ec8add9c2b5f405.js",
       "static/chunks/app/contacto/page-371f0a925dc8a7f4.js"
-    ],
-    "/nosotros/page": [
-      "static/chunks/webpack-c977ff06ee075525.js",
-      "static/chunks/4bd1b696-c023c6e3521b1417.js",
-      "static/chunks/255-4f84124391a7dac4.js",
-      "static/chunks/main-app-9ec8add9c2b5f405.js",
-      "static/chunks/619-ba102abea3e3d0e4.js",
-      "static/chunks/app/nosotros/page-f7b90891f0cd3ea0.js"
     ],
     "/product/[slug]/page": [
       "static/chunks/webpack-c977ff06ee075525.js",

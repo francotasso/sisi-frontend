@@ -1,7 +1,7 @@
-export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER
+export const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '51934164201'
 export const WHATSAPP_COUNTRY_CODE = '51'
 export const STORE_NAME = 'Sisi'
-export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
+export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://sisi.pe'
 
 export const SEARCH_DEBOUNCE_MS = 400
 export const PRODUCTS_PER_PAGE = 15

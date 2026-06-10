@@ -46,14 +46,8 @@ export default function AppHeader() {
         <div className="header-content">
           <div className="header-left">
             <Link href="/" className="logo-container" aria-label="Sisi - Inicio">
-              <svg className="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 28c0-4 2-12 8-12s8 8 8 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-                <path d="M12 28a8 8 0 1 1 16 0" stroke="currentColor" strokeWidth="1.8" fill="none"/>
-                <path d="M20 24v4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-                <path d="M10 16l4-6 4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M30 16l-4-6-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                <circle cx="17" cy="22" r="1" fill="currentColor"/>
-                <circle cx="23" cy="22" r="1" fill="currentColor"/>
+              <svg className="logo-icon" viewBox="0 0 40 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 36 C10 30 12 26 14 22 C14 18 12 16 14 14 L10 4 L16 10 C18 8 20 7 22 8 L26 3 L24 10 C26 12 26 14 24 16 C26 18 24 20 22 22 C22 28 24 32 24 36 L10 36 Z"/>
               </svg>
               <span className="logo-text">Sisi</span>
             </Link>

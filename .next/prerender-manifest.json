@@ -1,12 +1,8 @@
 {
   "version": 4,
   "routes": {
-    "/sitemap.xml": {
-      "initialHeaders": {
-        "cache-control": "public, max-age=0, must-revalidate",
-        "content-type": "application/xml",
-        "x-next-cache-tags": "_N_T_/layout,_N_T_/sitemap.xml/layout,_N_T_/sitemap.xml/route,_N_T_/sitemap.xml"
-      },
+    "/_not-found": {
+      "initialStatus": 404,
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -19,8 +15,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/sitemap.xml",
-      "dataRoute": null,
+      "srcRoute": "/_not-found",
+      "dataRoute": "/_not-found.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -54,6 +50,59 @@
         "x-next-revalidate-tag-token"
       ]
     },
+    "/nosotros": {
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/nosotros",
+      "dataRoute": "/nosotros.rsc",
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
+    "/sitemap.xml": {
+      "initialHeaders": {
+        "cache-control": "public, max-age=0, must-revalidate",
+        "content-type": "application/xml",
+        "x-next-cache-tags": "_N_T_/layout,_N_T_/sitemap.xml/layout,_N_T_/sitemap.xml/route,_N_T_/sitemap.xml"
+      },
+      "experimentalBypassFor": [
+        {
+          "type": "header",
+          "key": "next-action"
+        },
+        {
+          "type": "header",
+          "key": "content-type",
+          "value": "multipart/form-data;.*"
+        }
+      ],
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/sitemap.xml",
+      "dataRoute": null,
+      "allowHeader": [
+        "host",
+        "x-matched-path",
+        "x-prerender-revalidate",
+        "x-prerender-revalidate-if-generated",
+        "x-next-revalidated-tags",
+        "x-next-revalidate-tag-token"
+      ]
+    },
     "/contacto": {
       "experimentalBypassFor": [
         {
@@ -78,8 +127,7 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/_not-found": {
-      "initialStatus": 404,
+    "/lista-de-deseos": {
       "experimentalBypassFor": [
         {
           "type": "header",
@@ -92,8 +140,8 @@
         }
       ],
       "initialRevalidateSeconds": false,
-      "srcRoute": "/_not-found",
-      "dataRoute": "/_not-found.rsc",
+      "srcRoute": "/lista-de-deseos",
+      "dataRoute": "/lista-de-deseos.rsc",
       "allowHeader": [
         "host",
         "x-matched-path",
@@ -871,54 +919,6 @@
         "x-next-revalidate-tag-token"
       ]
     },
-    "/lista-de-deseos": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/lista-de-deseos",
-      "dataRoute": "/lista-de-deseos.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
-    "/nosotros": {
-      "experimentalBypassFor": [
-        {
-          "type": "header",
-          "key": "next-action"
-        },
-        {
-          "type": "header",
-          "key": "content-type",
-          "value": "multipart/form-data;.*"
-        }
-      ],
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/nosotros",
-      "dataRoute": "/nosotros.rsc",
-      "allowHeader": [
-        "host",
-        "x-matched-path",
-        "x-prerender-revalidate",
-        "x-prerender-revalidate-if-generated",
-        "x-next-revalidated-tags",
-        "x-next-revalidate-tag-token"
-      ]
-    },
     "/": {
       "experimentalBypassFor": [
         {
@@ -973,8 +973,8 @@
   },
   "notFoundRoutes": [],
   "preview": {
-    "previewModeId": "e2c8ac34c485e37187aebf4aa50f0ab4",
-    "previewModeSigningKey": "8f9bc472ea5937a02a3aa69989f196e42dd3979e384fa2b633525012365744f1",
-    "previewModeEncryptionKey": "9552d7812c7ba5c6324063118406bed4c6ef57b5b9a406c19149dd8ae1ac2915"
+    "previewModeId": "c2fe03c281081e553ffa514072d6b92f",
+    "previewModeSigningKey": "63af4dbd1a7fb0085fc33390446ce1df1df45b486d9f96b6fa50568d8022e60a",
+    "previewModeEncryptionKey": "3468eda534dbeb2f2ced25805118e5e0ef49b4f5dece8632ce99a12afa750cce"
   }
 }

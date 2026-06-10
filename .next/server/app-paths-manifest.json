@@ -1,6 +1,11 @@
 {
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/products/route": "app/api/products/route.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
   "/page": "app/page.js",
-  "/productos/page": "app/productos/page.js",
+  "/nosotros/page": "app/nosotros/page.js",
   "/lista-de-deseos/page": "app/lista-de-deseos/page.js",
+  "/productos/page": "app/productos/page.js",
+  "/contacto/page": "app/contacto/page.js",
   "/product/[slug]/page": "app/product/[slug]/page.js"
 }

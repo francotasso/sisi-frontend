@@ -3,9 +3,9 @@
   "/api/products/route": "/api/products",
   "/sitemap.xml/route": "/sitemap.xml",
   "/page": "/",
+  "/nosotros/page": "/nosotros",
   "/lista-de-deseos/page": "/lista-de-deseos",
   "/productos/page": "/productos",
   "/contacto/page": "/contacto",
-  "/nosotros/page": "/nosotros",
   "/product/[slug]/page": "/product/[slug]"
 }
