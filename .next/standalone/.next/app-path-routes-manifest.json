@@ -1,0 +1,11 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/api/products/route": "/api/products",
+  "/sitemap.xml/route": "/sitemap.xml",
+  "/page": "/",
+  "/lista-de-deseos/page": "/lista-de-deseos",
+  "/productos/page": "/productos",
+  "/contacto/page": "/contacto",
+  "/nosotros/page": "/nosotros",
+  "/product/[slug]/page": "/product/[slug]"
+}

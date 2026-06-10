@@ -1,0 +1,42 @@
+{
+  "storeName": "Sisi",
+  "description": "Tu tienda de productos importados en tendencia. Belleza, tecnología, hogar, infantil y más. Productos cuidadosamente seleccionados para ti.",
+  "hours": {
+    "monday": { "day": "Lunes", "hours": "9:00 AM - 8:00 PM", "isOpen": true },
+    "tuesday": { "day": "Martes", "hours": "9:00 AM - 8:00 PM", "isOpen": true },
+    "wednesday": { "day": "Miércoles", "hours": "9:00 AM - 8:00 PM", "isOpen": true },
+    "thursday": { "day": "Jueves", "hours": "9:00 AM - 8:00 PM", "isOpen": true },
+    "friday": { "day": "Viernes", "hours": "9:00 AM - 8:00 PM", "isOpen": true },
+    "saturday": { "day": "Sábado", "hours": "10:00 AM - 6:00 PM", "isOpen": true },
+    "sunday": { "day": "Domingo", "hours": "Cerrado", "isOpen": false }
+  },
+  "contact": {
+    "phone": "+51 934 164 201",
+    "whatsapp": "+51 934 164 201",
+    "email": "hola@sisi.pe",
+    "address": "Av. Larco 1234, Miraflores, Lima",
+    "addressMap": "https://www.google.com/maps?q=Av.+Larco+1234,+Miraflores,+Lima"
+  },
+  "socialMedia": {
+    "facebook": {
+      "name": "Facebook",
+      "handle": "@sisi.pe",
+      "url": "https://facebook.com/sisi.pe"
+    },
+    "instagram": {
+      "name": "Instagram",
+      "handle": "@sisi.pe",
+      "url": "https://instagram.com/sisi.pe"
+    },
+    "tiktok": {
+      "name": "TikTok",
+      "handle": "@sisi.pe",
+      "url": "https://tiktok.com/@sisi.pe"
+    },
+    "whatsapp": {
+      "name": "WhatsApp",
+      "handle": "Escríbenos",
+      "url": "https://wa.me/51934164201"
+    }
+  }
+}
