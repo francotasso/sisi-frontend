@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import testimonials from '@/data/testimonials.json'
+import { useState, useMemo, useEffect } from 'react'
+import { testimonialService, Testimonial } from '@/features/testimonials/services/testimonialService'
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -16,19 +16,27 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export default function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [activeIndex, setActiveIndex] = useState(0)
 
+  useEffect(() => {
+    testimonialService.getTestimonials().then(setTestimonials).catch(() => {})
+  }, [])
+
   const visible = useMemo(() => {
+    if (testimonials.length === 0) return []
     const items = [...testimonials]
     const result = []
     for (let i = 0; i < 3; i++) {
       result.push(items[(activeIndex + i) % items.length])
     }
     return result
-  }, [activeIndex])
+  }, [activeIndex, testimonials])
 
   const next = () => setActiveIndex(i => (i + 1) % testimonials.length)
   const prev = () => setActiveIndex(i => (i - 1 + testimonials.length) % testimonials.length)
+
+  if (testimonials.length === 0) return null
 
   return (
     <section className="testimonials-section">
@@ -49,10 +57,9 @@ export default function TestimonialsSection() {
                 <StarRating rating={t.rating} />
                 <blockquote className="testimonial-text">&ldquo;{t.text}&rdquo;</blockquote>
                 <div className="testimonial-author">
-                  <div className="testimonial-avatar" aria-hidden="true">{t.avatar}</div>
+                  {t.avatar && <div className="testimonial-avatar" aria-hidden="true">{t.avatar}</div>}
                   <div>
                     <span className="testimonial-name">{t.name}</span>
-                    <span className="testimonial-product">{t.product}</span>
                   </div>
                 </div>
               </article>

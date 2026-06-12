@@ -69,7 +69,7 @@ interface ProductRelatedProps {
 
 export default function ProductRelated({ products, currentProductSlug, currentProductCategory }: ProductRelatedProps) {
   const relatedProducts = products
-    .filter(p => p.category === currentProductCategory && p.slug !== currentProductSlug)
+    .filter(p => (p.categorySlug ?? p.category) === currentProductCategory && p.slug !== currentProductSlug)
     .slice(0, 4)
 
   if (relatedProducts.length === 0) return null

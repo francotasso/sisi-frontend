@@ -1,8 +1,44 @@
 import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { screen, waitFor, fireEvent } from '@testing-library/react'
-import { renderWithProviders } from '@/shared/test/testUtils'
+import { renderWithProviders, createProduct } from '@/shared/test/testUtils'
 import WishlistPage from '../WishlistPage'
+
+const product3 = createProduct({
+  id: '3',
+  slug: 'perfume-floral-dulce',
+  name: 'Perfume Floral Dulce',
+  price: 119.9,
+  discountPrice: 89.9,
+  category: 'Belleza',
+  image: 'https://example.com/perfume.jpg',
+  stock: true,
+})
+
+const product4 = createProduct({
+  id: '4',
+  slug: 'crema-hidratante-facial',
+  name: 'Crema Hidratante Facial',
+  price: 58.9,
+  category: 'Belleza',
+  image: 'https://example.com/crema.jpg',
+  stock: true,
+})
+
+const mockGetProducts = vi.fn()
+vi.mock('@/features/catalog/services/catalogService', () => ({
+  catalogService: {
+    getProducts: (...args: unknown[]) => mockGetProducts(...args),
+    getProductBySlug: vi.fn(),
+    getProductById: vi.fn(),
+    isNewProduct: vi.fn(() => false),
+    getDiscountPercentage: vi.fn((p: { discountPrice?: number; price: number }) => {
+      if (!p.discountPrice || p.discountPrice >= p.price) return null
+      return Math.round((1 - p.discountPrice / p.price) * 100)
+    }),
+    isInStock: vi.fn((p: { stock: boolean }) => p.stock === true),
+  },
+}))
 
 // Mock next/navigation useSearchParams to simulate shareable link params
 const mockUseSearchParams = vi.fn()
@@ -28,14 +64,11 @@ vi.mock('next/image', () => ({
   },
 }))
 
-// Known test products from data/products.json:
-// ID 3: Perfume Floral Dulce — price: 119.9, discountPrice: 89.9 (25% off)
-// ID 4: Crema Hidratante Facial — price: 58.9, no discountPrice
-
 describe('WishlistPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     mockUseSearchParams.mockReturnValue(new URLSearchParams('items=3'))
+    mockGetProducts.mockResolvedValue([product3, product4])
   })
 
   describe('loading state', () => {

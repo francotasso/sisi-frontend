@@ -10,14 +10,14 @@ export function useWishlistStore() {
   const wishlistItems = useSelector((state: RootState) => state.wishlist.items, shallowEqual)
 
   const addToWishlistDispatch = useCallback(
-    (productId: number) => {
+    (productId: string) => {
       dispatch(addToWishlist(productId))
     },
     [dispatch]
   )
 
   const removeFromWishlistDispatch = useCallback(
-    (productId: number) => {
+    (productId: string) => {
       dispatch(removeFromWishlist(productId))
     },
     [dispatch]
@@ -28,21 +28,21 @@ export function useWishlistStore() {
   }, [dispatch])
 
   const updateQuantityDispatch = useCallback(
-    (productId: number, quantity: number) => {
+    (productId: string, quantity: number) => {
       dispatch(updateQuantity({ id: productId, quantity }))
     },
     [dispatch]
   )
 
   const isInWishlist = useCallback(
-    (productId: number): boolean => {
+    (productId: string): boolean => {
       return wishlistItems.some(item => item.id === productId)
     },
     [wishlistItems]
   )
 
   const getItemQuantity = useCallback(
-    (productId: number): number => {
+    (productId: string): number => {
       const item = wishlistItems.find(item => item.id === productId)
       return item?.quantity || 1
     },

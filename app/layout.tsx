@@ -6,8 +6,8 @@ import AppHeader from '@/shared/components/AppHeader'
 import ScrollToTop from '@/shared/components/ScrollToTop'
 import Footer from '@/shared/components/Footer'
 import WhatsAppFloat from '@/shared/components/WhatsAppFloat'
-import storeInfo from '@/data/store-info.json'
 import { BASE_URL } from '@/shared/utils/constants'
+import { storeService } from '@/features/store/services/storeService'
 
 const sora = Sora({
   subsets: ['latin'],
@@ -53,41 +53,50 @@ export const metadata: Metadata = {
   },
 }
 
-const organizationJsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Store',
-  name: storeInfo.storeName,
-  description: storeInfo.description,
-  url: BASE_URL,
-  telephone: storeInfo.contact.phone,
-  email: storeInfo.contact.email,
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: 'Av. Larco 1234',
-    addressLocality: 'Miraflores',
-    addressRegion: 'Lima',
-    addressCountry: 'PE',
-  },
-  openingHoursSpecification: [
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Monday', opens: '09:00', closes: '20:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Tuesday', opens: '09:00', closes: '20:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Wednesday', opens: '09:00', closes: '20:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Thursday', opens: '09:00', closes: '20:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Friday', opens: '09:00', closes: '20:00' },
-    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '18:00' },
-  ],
-  sameAs: [
-    storeInfo.socialMedia.facebook.url,
-    storeInfo.socialMedia.instagram.url,
-    storeInfo.socialMedia.tiktok.url,
-  ],
-}
-
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  let storeData: { storeName: string; description: string; socialMedia: Record<string, { url: string }> } | null = null
+  try {
+    storeData = await storeService.getStoreInfoBasic()
+  } catch {
+    /* ignore — fallback to static data */
+  }
+
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Store',
+    name: storeData?.storeName ?? 'Sisi',
+    description: storeData?.description ?? 'Productos importados en tendencia',
+    url: BASE_URL,
+    telephone: storeData?.contact?.phone ?? '+51 934 164 201',
+    email: storeData?.contact?.email ?? 'hola@sisi.pe',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Av. Larco 1234',
+      addressLocality: 'Miraflores',
+      addressRegion: 'Lima',
+      addressCountry: 'PE',
+    },
+    openingHoursSpecification: [
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Monday', opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Tuesday', opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Wednesday', opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Thursday', opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Friday', opens: '09:00', closes: '20:00' },
+      { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '18:00' },
+    ],
+    sameAs: storeData?.socialMedia
+      ? Object.values(storeData.socialMedia).map(s => s.url)
+      : [
+          'https://facebook.com/sisi.pe',
+          'https://instagram.com/sisi.pe',
+          'https://tiktok.com/@sisi.pe',
+        ],
+  }
+
   return (
     <html lang="es">
       <body className={`${sora.variable} ${dmSans.variable}`}>

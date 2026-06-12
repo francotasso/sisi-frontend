@@ -3,8 +3,12 @@ import { catalogService } from '@/features/catalog/services/catalogService'
 import { BASE_URL } from '@/shared/utils/constants'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-
-  const products = await catalogService.getProducts()
+  let products: { slug: string; createdAt: string; stock: boolean }[] = []
+  try {
+    products = await catalogService.getProducts()
+  } catch {
+    /* if API is unavailable, return static pages only */
+  }
 
   const productUrls = products.map((product) => ({
     url: `${BASE_URL}/producto/${product.slug}`,

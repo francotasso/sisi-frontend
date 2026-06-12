@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { WHATSAPP_NUMBER } from '@/shared/utils/constants'
-import storeInfoData from '@/data/store-info.json'
+import { storeService } from '@/features/store/services/storeService'
 
 function formatWhatsAppDisplay(num: string): string {
   const digits = num.replace(/\D/g, '')
@@ -16,9 +16,21 @@ export const metadata: Metadata = {
   alternates: { canonical: '/contacto' },
 }
 
-const { hours, contact } = storeInfoData
+export default async function ContactoPage() {
+  let storeInfo
+  try {
+    storeInfo = await storeService.getStoreInfo()
+  } catch {
+    return (
+      <div className="contacto-page">
+        <h1 className="contacto-title">Contacto</h1>
+        <p style={{ textAlign: 'center', opacity: 0.6 }}>No se pudo cargar la información de la tienda.</p>
+      </div>
+    )
+  }
 
-export default function ContactoPage() {
+  const { hours, contact, socialMedia } = storeInfo
+
   return (
     <div className="contacto-page">
       <h1 className="contacto-title">Contacto</h1>
@@ -81,7 +93,7 @@ export default function ContactoPage() {
             <h2>Redes Sociales</h2>
           </div>
           <div className="contacto-social">
-            {Object.entries(storeInfoData.socialMedia).map(([key, social]) => (
+            {Object.entries(socialMedia).map(([key, social]) => (
               <a key={key} href={key === 'whatsapp' ? `https://wa.me/${WHATSAPP_NUMBER}` : social.url} target="_blank" className={`contacto-social-btn ${key}`} rel="noopener noreferrer">
                 {social.handle}
               </a>

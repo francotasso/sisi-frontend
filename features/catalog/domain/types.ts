@@ -18,13 +18,14 @@ export interface ProductFAQ {
 }
 
 export interface Product {
-  id: number
+  id: string
   sku: string
   slug: string
   name: string
   price: number
   discountPrice?: number
   category: string
+  categorySlug?: string
   image: string
   images?: string[]
   description: string
@@ -33,6 +34,7 @@ export interface Product {
   stockCount?: number
   bestSeller?: boolean
   createdAt: string
+  updatedAt?: string
   specs: ProductSpecs
   warranty?: string
   returnPolicy?: string
@@ -44,6 +46,10 @@ export interface ProductsFilter {
   inStock?: boolean
   search?: string
   isNew?: boolean
+  priceMin?: number
+  priceMax?: number
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
 }
 
 export type SortOption = 'newest' | 'price-low' | 'price-high' | 'name'

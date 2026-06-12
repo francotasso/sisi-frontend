@@ -6,7 +6,7 @@ const STORAGE_KEY = 'recently-viewed'
 const MAX_RECENTLY_VIEWED = 6
 
 export interface RecentlyViewedItem {
-  id: number
+  id: string
   slug: string
   name: string
   image: string

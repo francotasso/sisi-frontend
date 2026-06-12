@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, Suspense, useMemo, useCallback } from 'react'
+import { useState, useEffect, Suspense, useMemo, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { useCatalog } from '../../hooks/useCatalog'
+import { useCatalog, type CategoryOption } from '../../hooks/useCatalog'
 import ProductList from './ProductList'
 import CategoryChips from './CategoryChips'
 import RecentlyViewed from './RecentlyViewed'
@@ -11,6 +11,15 @@ import { PRODUCTS_PER_PAGE } from '@/shared/utils/constants'
 import { catalogService } from '../../services/catalogService'
 
 type TabType = 'todos' | 'novedades'
+
+function resolveCategoryParam(
+  param: string | null,
+  categories: CategoryOption[]
+): string {
+  if (!param) return ''
+  const cat = categories.find(c => c.value === param || c.label === param)
+  return cat?.value ?? param
+}
 
 function CatalogContent() {
   const searchParams = useSearchParams()
@@ -24,22 +33,31 @@ function CatalogContent() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState<TabType>('todos')
+  const lastFetchKey = useRef('')
 
   useEffect(() => {
     setCurrentPage(1)
-    if (categoryParam) {
-      setSelectedCategory(categoryParam)
-      fetchProducts({ category: categoryParam }, sort)
+    const resolved = resolveCategoryParam(categoryParam, categories)
+    const fetchKey = resolved || searchParam || '__all__'
+
+    if (fetchKey === lastFetchKey.current) return
+    lastFetchKey.current = fetchKey
+
+    if (resolved) {
+      setSelectedCategory(resolved)
+      fetchProducts({ category: resolved }, sort)
     } else if (searchParam) {
+      setSelectedCategory('')
       fetchProducts({ search: searchParam }, sort)
     } else {
+      setSelectedCategory('')
       fetchProducts(undefined, sort)
     }
-  }, [categoryParam, searchParam, sort, fetchProducts])
+  }, [categoryParam, searchParam, sort, fetchProducts, categories])
 
   const filteredProducts = useMemo(() => {
     if (!selectedCategory) return allProducts
-    return allProducts.filter(p => p.category === selectedCategory)
+    return allProducts.filter(p => (p.categorySlug ?? p.category) === selectedCategory)
   }, [allProducts, selectedCategory])
 
   const sortedProducts = useMemo(() => {

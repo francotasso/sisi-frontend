@@ -1,24 +1,39 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Product, ProductsFilter, SortOption } from '../domain/types'
 import { catalogService } from '../services/catalogService'
 
+export interface CategoryOption {
+  value: string
+  label: string
+}
+
 interface UseCatalogResult {
   products: Product[]
-  categories: string[]
+  categories: CategoryOption[]
   loading: boolean
   error: string | null
   fetchProducts: (filter?: ProductsFilter, sort?: SortOption) => Promise<void>
   searchProducts: (query: string) => Promise<void>
-  getProductById: (id: number) => Promise<Product | undefined>
+  getProductById: (id: string) => Promise<Product | undefined>
+  getCategorySlug: (name: string) => string | undefined
 }
 
 export function useCatalog(): UseCatalogResult {
   const [products, setProducts] = useState<Product[]>([])
-  const [categories, setCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<CategoryOption[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const categoryLabelToSlug = useMemo(() => {
+    return new Map(categories.map(c => [c.label, c.value]))
+  }, [categories])
+
+  const getCategorySlug = useCallback(
+    (name: string): string | undefined => categoryLabelToSlug.get(name),
+    [categoryLabelToSlug]
+  )
 
   const fetchProducts = useCallback(async (filter?: ProductsFilter, sort?: SortOption) => {
     setLoading(true)
@@ -48,14 +63,18 @@ export function useCatalog(): UseCatalogResult {
     }
   }, [])
 
-  const getProductById = useCallback(async (id: number) => {
+  const getProductById = useCallback(async (id: string) => {
     return catalogService.getProductById(id)
   }, [])
 
   useEffect(() => {
     const loadCategories = async () => {
-      const cats = await catalogService.getCategories()
-      setCategories(cats)
+      try {
+        const cats = await catalogService.getCategories()
+        setCategories(cats)
+      } catch (err) {
+        console.error('Error al cargar categorías:', err)
+      }
     }
     loadCategories()
     fetchProducts()
@@ -69,5 +88,6 @@ export function useCatalog(): UseCatalogResult {
     fetchProducts,
     searchProducts,
     getProductById,
+    getCategorySlug,
   }
 }

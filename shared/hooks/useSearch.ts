@@ -49,12 +49,12 @@ export function useSearch(): UseSearchResult {
 
     const normalizedQuery = searchQuery.toLowerCase().trim()
     
-    const filtered = allProducts.filter(product => {
+        const filtered = allProducts.filter(product => {
       const nameMatch = product.name.toLowerCase().includes(normalizedQuery)
       const categoryMatch = product.category.toLowerCase().includes(normalizedQuery)
       const brandMatch = product.specs.brand?.toLowerCase().includes(normalizedQuery)
       const descriptionMatch = product.description?.toLowerCase().includes(normalizedQuery)
-      
+
       return nameMatch || categoryMatch || brandMatch || descriptionMatch
     })
 

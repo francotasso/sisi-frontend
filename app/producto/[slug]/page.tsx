@@ -55,22 +55,31 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  const products = await catalogService.getProducts()
-  return products.map((product) => ({
-    slug: product.slug,
-  }))
+  try {
+    const products = await catalogService.getProducts()
+    return products.map((product) => ({
+      slug: product.slug,
+    }))
+  } catch {
+    return []
+  }
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
 
-  const product = await catalogService.getProductBySlug(slug)
+  const [product, categories] = await Promise.all([
+    catalogService.getProductBySlug(slug),
+    catalogService.getCategories(),
+  ])
 
   if (!product) {
     notFound()
   }
 
-  const relatedProducts = await catalogService.getProducts({ category: product.category })
+  const categorySlug = categories.find(c => c.label === product.category)?.value ?? product.category
+
+  const relatedProducts = await catalogService.getProducts({ category: categorySlug })
   const relatedFiltered = relatedProducts.filter(p => p.slug !== slug).slice(0, 4)
 
   const breadcrumbJsonLd = {
@@ -78,7 +87,7 @@ export default async function ProductPage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${BASE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: product.category, item: `${BASE_URL}/productos?category=${encodeURIComponent(product.category)}` },
+      { '@type': 'ListItem', position: 2, name: product.category, item: `${BASE_URL}/productos?category=${encodeURIComponent(categorySlug)}` },
       { '@type': 'ListItem', position: 3, name: product.name },
     ],
   }
@@ -135,7 +144,7 @@ export default async function ProductPage({ params }: Props) {
       <ProductDetailClient
       product={product}
       relatedProducts={relatedFiltered}
-      currentProductCategory={product.category}
+      currentProductCategory={categorySlug}
     />
     </>
   )

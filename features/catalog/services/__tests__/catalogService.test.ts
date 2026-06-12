@@ -1,10 +1,24 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { catalogService } from '../catalogService'
 import { Product } from '../../domain/types'
 
+const mockGetAll = vi.fn()
+const mockFilter = vi.fn()
+
+vi.mock('@/features/catalog/repositories/productsRepository', () => ({
+  productsRepository: {
+    getAll: (...args: unknown[]) => mockGetAll(...args),
+    filter: (...args: unknown[]) => mockFilter(...args),
+    getBySlug: vi.fn(),
+    getById: vi.fn(),
+    search: vi.fn(),
+    getCategories: vi.fn(),
+  },
+}))
+
 function createProduct(overrides: Partial<Product> = {}): Product {
   return {
-    id: 1,
+    id: '1',
     slug: 'test-product',
     name: 'Test Product',
     price: 100,
@@ -20,7 +34,18 @@ function createProduct(overrides: Partial<Product> = {}): Product {
   }
 }
 
+const productA = createProduct({ id: 'a', name: 'Alpha', price: 50, discountPrice: 40 })
+const productB = createProduct({ id: 'b', name: 'Beta', price: 100 })
+const productC = createProduct({ id: 'c', name: 'Gamma', price: 80, discountPrice: 60 })
+const productD = createProduct({ id: 'd', name: 'Delta', price: 120, discountPrice: 90 })
+
+const mockProducts = [productA, productB, productC, productD]
+
 describe('CatalogService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   describe('getDiscountPercentage', () => {
     it('returns null when discountPrice is undefined', () => {
       const product = createProduct({ discountPrice: undefined })
@@ -35,13 +60,11 @@ describe('CatalogService', () => {
 
     it('returns correct percentage when discountPrice exists and is lower than price', () => {
       const product = createProduct({ price: 100, discountPrice: 75 })
-      // (1 - 75/100) * 100 = 25
       expect(catalogService.getDiscountPercentage(product)).toBe(25)
     })
 
     it('returns correct percentage for a non-round number discount', () => {
       const product = createProduct({ price: 119.9, discountPrice: 89.9 })
-      // (1 - 89.9/119.9) * 100 ≈ 25.02 -> rounds to 25
       expect(catalogService.getDiscountPercentage(product)).toBe(25)
     })
 
@@ -61,24 +84,8 @@ describe('CatalogService', () => {
     })
 
     it('rounds percentage correctly for fractional discounts', () => {
-      // 33.33% discount
       const product = createProduct({ price: 99, discountPrice: 66 })
-      // (1 - 66/99) * 100 = 33.33... -> rounds to 33
       expect(catalogService.getDiscountPercentage(product)).toBe(33)
-    })
-
-    it('returns null when discountPrice is negative', () => {
-      const product = createProduct({ price: 100, discountPrice: -10 })
-      // discountPrice (-10) < price (100), but the percentage would be negative
-      // Math.round((1 - (-10)/100) * 100) = Math.round(110) = 110
-      // Since discountPrice >= price check is: !product.discountPrice || product.discountPrice >= product.price
-      // discountPrice is -10, which is truthy (not 0/null/undefined)
-      // -10 >= 100 is false
-      // So it goes to Math.round((1 - (-10)/100) * 100) = 110
-      // This is an edge case. The function allows it but a negative price is unrealistic.
-      // Let's just check it doesn't throw.
-      const result = catalogService.getDiscountPercentage(product)
-      expect(typeof result).toBe('number')
     })
   })
 
@@ -96,7 +103,6 @@ describe('CatalogService', () => {
     })
 
     it('returns true for product created just under 14 days ago (boundary)', () => {
-      // 13 days 23 hours 59 minutes ago — safely within the 14-day window
       const date = new Date(Date.now() - 13.99 * 24 * 60 * 60 * 1000)
       const product = createProduct({ createdAt: date.toISOString() })
       expect(catalogService.isNewProduct(product)).toBe(true)
@@ -117,59 +123,34 @@ describe('CatalogService', () => {
     })
   })
 
-  describe('sortProducts (via getProducts)', () => {
-    it('sorts by price-low ascending using discountPrice as effective price', async () => {
-      const products = await catalogService.getProducts(undefined, 'price-low')
-      expect(products.length).toBeGreaterThan(1)
-
-      for (let i = 0; i < products.length - 1; i++) {
-        const effA = products[i].discountPrice ?? products[i].price
-        const effB = products[i + 1].discountPrice ?? products[i + 1].price
-        expect(effA).toBeLessThanOrEqual(effB)
-      }
+  describe('getProducts delegation', () => {
+    it('calls getAll when no filter is provided', async () => {
+      mockGetAll.mockResolvedValue(mockProducts)
+      const result = await catalogService.getProducts()
+      expect(mockGetAll).toHaveBeenCalled()
+      expect(result).toEqual(mockProducts)
     })
 
-    it('sorts by price-high descending using discountPrice as effective price', async () => {
-      const products = await catalogService.getProducts(undefined, 'price-high')
-      expect(products.length).toBeGreaterThan(1)
-
-      for (let i = 0; i < products.length - 1; i++) {
-        const effA = products[i].discountPrice ?? products[i].price
-        const effB = products[i + 1].discountPrice ?? products[i + 1].price
-        expect(effA).toBeGreaterThanOrEqual(effB)
-      }
+    it('calls filter when category filter is provided', async () => {
+      mockFilter.mockResolvedValue([productA])
+      const result = await catalogService.getProducts({ category: 'Test Category' })
+      expect(mockFilter).toHaveBeenCalled()
+      expect(result).toEqual([productA])
     })
 
-    it('sorts by name alphabetically', async () => {
-      const products = await catalogService.getProducts(undefined, 'name')
-      expect(products.length).toBeGreaterThan(1)
-
-      for (let i = 0; i < products.length - 1; i++) {
-        expect(products[i].name.localeCompare(products[i + 1].name)).toBeLessThanOrEqual(0)
-      }
-    })
-
-    it('discountPrice affects position in price-low sort (a discounted item appears before a higher-priced non-discounted one)', async () => {
-      // This test validates that an item with discountPrice is sorted by its discounted price
-      // not by its original price in price-low sort
-      const products = await catalogService.getProducts(undefined, 'price-low')
-
-      // Find a product with discountPrice to verify it's sorted by effective price
-      const discountedProduct = products.find(p => p.discountPrice !== undefined && p.discountPrice !== null)
-      expect(discountedProduct).toBeDefined()
-
-      const discountedIdx = products.indexOf(discountedProduct!)
-      const effectivePrice = discountedProduct!.discountPrice!
-
-      // The product at this position should have effective price >= previous and <= next
-      if (discountedIdx > 0) {
-        const prevEff = products[discountedIdx - 1].discountPrice ?? products[discountedIdx - 1].price
-        expect(prevEff).toBeLessThanOrEqual(effectivePrice)
-      }
-      if (discountedIdx < products.length - 1) {
-        const nextEff = products[discountedIdx + 1].discountPrice ?? products[discountedIdx + 1].price
-        expect(effectivePrice).toBeLessThanOrEqual(nextEff)
-      }
+    it('filters by isNew after fetching', async () => {
+      const oldProduct = createProduct({
+        id: 'old',
+        createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+      })
+      const newProduct = createProduct({
+        id: 'new',
+        createdAt: new Date().toISOString(),
+      })
+      mockFilter.mockResolvedValue([oldProduct, newProduct])
+      const result = await catalogService.getProducts({ isNew: true })
+      expect(result).toHaveLength(1)
+      expect(result[0].id).toBe('new')
     })
   })
 })

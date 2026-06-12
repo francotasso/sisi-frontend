@@ -2,22 +2,40 @@ import { productsRepository } from '../repositories/productsRepository'
 import { Product, ProductsFilter, SortOption } from '../domain/types'
 import { NEW_PRODUCT_DAYS } from '@/shared/utils/constants'
 
+function sortToApiSort(sort: SortOption): string | undefined {
+  switch (sort) {
+    case 'newest':
+      return undefined
+    case 'price-low':
+      return 'price-low'
+    case 'price-high':
+      return 'price-high'
+    case 'name':
+      return 'name'
+  }
+}
+
 export class CatalogService {
   async getProducts(filter?: ProductsFilter, sort?: SortOption): Promise<Product[]> {
-    let products = filter ? await productsRepository.filter(filter) : await productsRepository.getAll()
+    const apiSort = sort ? sortToApiSort(sort) : undefined
+
+    let products: Product[]
+
+    if (filter) {
+      const filterWithSort: ProductsFilter = { ...filter, sortBy: apiSort }
+      products = await productsRepository.filter(filterWithSort, apiSort)
+    } else {
+      products = await productsRepository.getAll(apiSort)
+    }
 
     if (filter?.isNew) {
       products = products.filter(p => this.isNewProduct(p))
     }
 
-    if (sort) {
-      products = this.sortProducts(products, sort)
-    }
-
     return products
   }
 
-  async getProductById(id: number): Promise<Product | undefined> {
+  async getProductById(id: string): Promise<Product | undefined> {
     return productsRepository.getById(id)
   }
 
@@ -25,30 +43,12 @@ export class CatalogService {
     return productsRepository.getBySlug(slug)
   }
 
-  async getCategories(): Promise<string[]> {
+  async getCategories(): Promise<{ value: string; label: string }[]> {
     return productsRepository.getCategories()
   }
 
   async searchProducts(query: string): Promise<Product[]> {
     return productsRepository.search(query)
-  }
-
-  private sortProducts(products: Product[], sort: SortOption): Product[] {
-    const sorted = [...products]
-
-    const effectivePrice = (p: Product) => p.discountPrice ?? p.price
-
-    switch (sort) {
-      case 'price-low':
-        return sorted.sort((a, b) => effectivePrice(a) - effectivePrice(b))
-      case 'price-high':
-        return sorted.sort((a, b) => effectivePrice(b) - effectivePrice(a))
-      case 'name':
-        return sorted.sort((a, b) => a.name.localeCompare(b.name))
-      case 'newest':
-      default:
-        return sorted
-    }
   }
 
   isNewProduct(product: Product): boolean {

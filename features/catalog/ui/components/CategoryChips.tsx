@@ -1,7 +1,12 @@
 'use client'
 
+export interface CategoryOption {
+  value: string
+  label: string
+}
+
 interface CategoryChipsProps {
-  categories: string[]
+  categories: CategoryOption[]
   selectedCategory: string
   onCategoryChange: (category: string) => void
 }
@@ -18,11 +23,11 @@ export default function CategoryChips({ categories, selectedCategory, onCategory
       </button>
       {categories.map(cat => (
         <button
-          key={cat}
-          className={`category-chip${selectedCategory === cat ? ' active' : ''}`}
-          onClick={() => onCategoryChange(cat)}
+          key={cat.value}
+          className={`category-chip${selectedCategory === cat.value ? ' active' : ''}`}
+          onClick={() => onCategoryChange(cat.value)}
         >
-          {cat}
+          {cat.label}
         </button>
       ))}
     </div>

@@ -15,7 +15,7 @@ interface WishlistItemWithProduct extends Product {
 }
 
 interface WishlistPageContentProps {
-  sharedItemIds?: number[]
+  sharedItemIds?: string[]
 }
 
 function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
@@ -37,7 +37,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
         setLoading(true)
         const allProducts = await catalogService.getProducts()
 
-        let itemsToLoad: { id: number; quantity: number }[]
+        let itemsToLoad: { id: string; quantity: number }[]
 
         if (sharedItemIds && sharedItemIds.length > 0) {
           itemsToLoad = sharedItemIds.map(id => ({ id, quantity: 1 }))
@@ -64,7 +64,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
     loadProducts()
   }, [itemsKey, sharedItemIds])
 
-  const handleQuantityChange = (productId: number, newQuantity: number, hasStock: boolean) => {
+  const handleQuantityChange = (productId: string, newQuantity: number, hasStock: boolean) => {
     if (!hasStock) return
     const clampedQuantity = Math.min(Math.max(1, newQuantity), MAX_QUANTITY)
     wishlistStore.updateQuantity(productId, clampedQuantity)
@@ -76,7 +76,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
 
   const effectivePrice = (p: WishlistItemWithProduct) => p.discountPrice ?? p.price
 
-  const handleRemove = (productId: number) => {
+  const handleRemove = (productId: string) => {
     wishlistStore.removeFromWishlist(productId)
   }
 
@@ -395,7 +395,7 @@ function WishlistPageWrapper() {
 
   const sharedItemIds = useMemo(() => {
     return itemsParam
-      ? itemsParam.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id))
+      ? itemsParam.split(',').map(id => id.trim()).filter(id => id.length > 0)
       : []
   }, [itemsParam])
 

@@ -32,7 +32,7 @@ export function createProduct(
   overrides: Partial<import('@/features/catalog/domain/types').Product> = {}
 ): import('@/features/catalog/domain/types').Product {
   return {
-    id: 1,
+    id: '1',
     sku: 'SIS-001',
     slug: 'test-product',
     name: 'Test Product',
