@@ -68,7 +68,7 @@ export default function ProductDetailClient({
         <nav className="breadcrumb">
           <Link href="/" className="breadcrumb-item">Inicio</Link>
           <svg className="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-          <Link href={`/?category=${product.category}`} className="breadcrumb-item">{product.category}</Link>
+          <Link href={`/productos?category=${product.category}`} className="breadcrumb-item">{product.category}</Link>
           <svg className="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           <span className="breadcrumb-current">{product.name}</span>
         </nav>

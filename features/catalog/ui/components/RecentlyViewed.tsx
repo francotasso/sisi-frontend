@@ -15,7 +15,7 @@ const RecentItem = React.memo(function RecentItem({ item }: { item: RecentlyView
   const imageUrl = item.image || getFallbackImageUrl(item.name)
 
   return (
-    <Link href={`/product/${item.slug}`} className="recently-card">
+    <Link href={`/producto/${item.slug}`} className="recently-card">
       <div className="recently-card-image">
         <SafeImage
           src={imageUrl}

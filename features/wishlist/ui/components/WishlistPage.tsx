@@ -200,7 +200,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
 
             return (
               <div key={item.id} className="wishlist-item">
-                <Link href={`/product/${item.slug}`}>
+                <Link href={`/producto/${item.slug}`}>
                   <SafeImage
                     src={imageUrl}
                     alt={item.name}
@@ -212,7 +212,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
                 </Link>
 
                 <div className="wishlist-item-info">
-                  <Link href={`/product/${item.slug}`}>
+                <Link href={`/producto/${item.slug}`}>
                     <div className="wishlist-item-category">{item.category}</div>
                     <h3 className="wishlist-item-name">{item.name}</h3>
                   </Link>

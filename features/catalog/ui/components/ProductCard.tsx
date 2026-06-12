@@ -31,7 +31,7 @@ function ProductCard({ product }: ProductCardProps) {
   const isOutOfStock = product.stock === false
 
   return (
-    <Link href={`/product/${product.slug}`} className="card">
+    <Link href={`/producto/${product.slug}`} className="card">
       <div className="image-container">
         <SafeImage
           src={imageUrl}

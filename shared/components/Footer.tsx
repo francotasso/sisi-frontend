@@ -32,15 +32,6 @@ export default function Footer() {
           <ul className="footer-links">
             <li><Link href="/">Inicio</Link></li>
             <li><Link href="/productos">Productos</Link></li>
-            <li><Link href="/lista-de-deseos">Favoritos</Link></li>
-            <li><Link href="/nosotros">Nosotros</Link></li>
-            <li><Link href="/contacto">Contacto</Link></li>
-          </ul>
-        </div>
-
-        <div className="footer-section">
-          <h3>Categorías</h3>
-          <ul className="footer-links">
             <li><Link href="/productos?category=Belleza">Belleza</Link></li>
             <li><Link href="/productos?category=Tecnolog%C3%ADa">Tecnología</Link></li>
             <li><Link href="/productos?category=Hogar">Hogar</Link></li>

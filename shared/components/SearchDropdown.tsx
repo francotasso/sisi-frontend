@@ -39,7 +39,7 @@ export default function SearchDropdown({ onSelect }: SearchDropdownProps) {
     setIsOpen(false)
     setQuery('')
     onSelect?.()
-    window.location.href = `/product/${slug}`
+    window.location.href = `/producto/${slug}`
   }, [onSelect, setQuery])
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {

@@ -30,7 +30,7 @@ const RelatedItem = React.memo(function RelatedItem({ product }: RelatedItemProp
   }
 
   return (
-    <Link href={`/product/${product.slug}`} className="related-card">
+    <Link href={`/producto/${product.slug}`} className="related-card">
       <div className="related-image">
         <SafeImage 
           src={imageUrl} 

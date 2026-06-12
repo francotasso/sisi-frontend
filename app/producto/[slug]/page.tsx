@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: product.name,
     description: product.shortDescription || product.description.slice(0, 160),
     alternates: {
-      canonical: `/product/${product.slug}`,
+      canonical: `/producto/${product.slug}`,
     },
     openGraph: {
       title: `${product.name} - Sisi`,
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         height: 600,
         type: 'image/jpeg',
       }] : [],
-      url: `${BASE_URL}/product/${product.slug}`,
+      url: `${BASE_URL}/producto/${product.slug}`,
       siteName: 'Sisi',
       locale: 'es_PE',
       type: 'website',
@@ -78,7 +78,7 @@ export default async function ProductPage({ params }: Props) {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${BASE_URL}/` },
-      { '@type': 'ListItem', position: 2, name: product.category, item: `${BASE_URL}/?category=${encodeURIComponent(product.category)}` },
+      { '@type': 'ListItem', position: 2, name: product.category, item: `${BASE_URL}/productos?category=${encodeURIComponent(product.category)}` },
       { '@type': 'ListItem', position: 3, name: product.name },
     ],
   }
@@ -95,7 +95,7 @@ export default async function ProductPage({ params }: Props) {
       price: product.price,
       priceCurrency: 'PEN',
       availability: product.stock === true ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: `${BASE_URL}/product/${product.slug}`,
+      url: `${BASE_URL}/producto/${product.slug}`,
     },
     brand: {
       '@type': 'Brand',

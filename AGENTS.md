@@ -78,6 +78,9 @@ shared/
 - All tests must pass before PR (`npm run test && npm run build`)
 - Run `npm run test:watch` during development for quick feedback
 
+## Agent Rules
+- **NUNCA ejecutar `npm run build`** después de cambios — el dev server se cae. Solo usar `npm run lint` y `npm run test` para verificar.
+
 ## Gotchas
 - `useSearchParams()` in Next.js 15 **requires `<Suspense>` boundary** — always wrap components using it
 - `sharedItemIds` passed as prop must be **memoized** (`useMemo`) — creating new array reference per render causes infinite `useEffect` loop

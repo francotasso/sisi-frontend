@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const products = await catalogService.getProducts()
 
   const productUrls = products.map((product) => ({
-    url: `${BASE_URL}/product/${product.slug}`,
+    url: `${BASE_URL}/producto/${product.slug}`,
     lastModified: new Date(product.createdAt),
     changeFrequency: 'weekly' as const,
     priority: product.stock ? 0.8 : 0.5,

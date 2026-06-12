@@ -134,7 +134,7 @@ describe('ProductCard', () => {
       renderWithProviders(<ProductCard product={product} />)
 
       const link = screen.getByRole('link')
-      expect(link).toHaveAttribute('href', '/product/test-lipstick')
+      expect(link).toHaveAttribute('href', '/producto/test-lipstick')
     })
   })
 })
