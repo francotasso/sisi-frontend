@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Product } from '@/features/catalog/domain/types'
 import { useWishlistStore } from '@/features/wishlist/hooks/useWishlistStore'
@@ -20,10 +20,11 @@ interface ProductDetailClientProps {
 }
 
 export default function ProductDetailClient({
-  product,
+  product: initialProduct,
   relatedProducts,
   currentProductCategory,
 }: ProductDetailClientProps) {
+  const [product, setProduct] = useState(initialProduct)
   const wishlistStore = useWishlistStore()
   const inWishlist = wishlistStore.isInWishlist(product.id)
   const { addRecentlyViewed } = useRecentlyViewed()
@@ -37,6 +38,12 @@ export default function ProductDetailClient({
       price: product.price,
     })
   }, [product.id, product.slug, product.name, product.image, product.price, addRecentlyViewed])
+
+  useEffect(() => {
+    catalogService.getProductBySlug(product.slug).then(fresh => {
+      if (fresh) setProduct(fresh)
+    }).catch(() => {})
+  }, [product.slug])
 
   const handleToggleWishlist = () => {
     if (inWishlist) {
