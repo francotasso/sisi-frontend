@@ -58,7 +58,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  let storeData: { storeName: string; description: string; socialMedia: Record<string, { url: string }> } | null = null
+  let storeData: { storeName: string; description: string; contact: { phone: string; whatsapp: string; email: string; address: string; addressMap: string }; socialMedia: Record<string, { url: string }> } | null = null
   try {
     storeData = await storeService.getStoreInfoBasic()
   } catch {
