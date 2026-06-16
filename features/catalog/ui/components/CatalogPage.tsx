@@ -34,6 +34,7 @@ function CatalogContent() {
   const [currentPage, setCurrentPage] = useState(1)
   const [activeTab, setActiveTab] = useState<TabType>('todos')
   const lastFetchKey = useRef('')
+  const catalogRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setCurrentPage(1)
@@ -110,10 +111,11 @@ function CatalogContent() {
   }, [selectedCategory, fetchProducts])
 
   const handlePageChange = useCallback((page: number) => {
-    if (page >= 1 && page <= totalPages) {
+    if (page >= 1 && page <= totalPages && page !== currentPage) {
       setCurrentPage(page)
+      catalogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
-  }, [totalPages])
+  }, [totalPages, currentPage])
 
   const handleTabChange = useCallback((tab: TabType) => {
     setActiveTab(tab)
@@ -149,7 +151,7 @@ function CatalogContent() {
       />
 
       <div className="catalog-layout">
-        <div className="catalog-main">
+        <div ref={catalogRef} className="catalog-main">
           <ProductList
             products={paginatedProducts}
             loading={loading}

@@ -36,8 +36,9 @@ export default function ProductDetailClient({
       name: product.name,
       image: product.image,
       price: product.price,
+      discountPrice: product.discountPrice,
     })
-  }, [product.id, product.slug, product.name, product.image, product.price, addRecentlyViewed])
+  }, [product.id, product.slug, product.name, product.image, product.price, product.discountPrice, addRecentlyViewed])
 
   useEffect(() => {
     catalogService.getProductBySlug(product.slug).then(fresh => {
@@ -73,7 +74,7 @@ export default function ProductDetailClient({
   return (
     <div className="product-detail-container">
         <nav className="breadcrumb">
-          <Link href="/" className="breadcrumb-item">Inicio</Link>
+          <Link href="/productos" className="breadcrumb-item">Producto</Link>
           <svg className="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
           <Link href={`/productos?category=${product.categorySlug ?? product.category}`} className="breadcrumb-item">{product.category}</Link>
           <svg className="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>

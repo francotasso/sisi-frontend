@@ -71,7 +71,12 @@ export function useCatalog(): UseCatalogResult {
     const loadCategories = async () => {
       try {
         const cats = await catalogService.getCategories()
-        setCategories(cats)
+        const sorted = [...cats].sort((a, b) => {
+          if (a.label === 'Otros') return 1
+          if (b.label === 'Otros') return -1
+          return 0
+        })
+        setCategories(sorted)
       } catch (err) {
         console.error('Error al cargar categorías:', err)
       }

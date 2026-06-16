@@ -11,6 +11,7 @@ export interface RecentlyViewedItem {
   name: string
   image: string
   price: number
+  discountPrice?: number
 }
 
 function readFromStorage(): RecentlyViewedItem[] {

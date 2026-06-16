@@ -382,6 +382,26 @@ ul {
   line-height: 1.35;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.search-result-old-price {
+  font-size: 0.75rem;
+  font-weight: 500;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.search-result-discount-price {
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
 }
 
 .search-loading {
@@ -1035,7 +1055,6 @@ ul {
 .pagination button:hover:not(:disabled),
 .pagination-btn:hover:not(:disabled) {
   border-color: var(--accent);
-  color: var(--accent);
 }
 
 .pagination button:disabled,
@@ -1045,7 +1064,11 @@ ul {
 }
 
 .pagination button.active,
-.pagination-btn.active {
+.pagination-btn.active,
+.pagination-btn.active:hover,
+.pagination-btn.active:focus,
+.pagination-btn.active:focus-visible,
+.pagination-btn.active:active {
   background: var(--accent);
   border-color: var(--accent);
   color: white;
@@ -2013,13 +2036,44 @@ ul {
 }
 
 .recently-card-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 6px;
+  margin-top: auto;
+}
+
+.recently-card-old-price {
+  width: 100%;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  opacity: 0.55;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-variant-numeric: tabular-nums;
+}
+
+.recently-card-discount-price {
   font-size: 0.85rem;
   font-weight: 700;
   font-family: var(--font-body, 'DM Sans', sans-serif);
   color: var(--accent);
   line-height: 1.35;
   font-variant-numeric: tabular-nums;
-  margin-top: auto;
+}
+
+.recently-card-offer {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
 }
 
 /* ===== WISHLIST PAGE ===== */

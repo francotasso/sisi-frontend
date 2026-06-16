@@ -118,7 +118,14 @@ export default function SearchDropdown({ onSelect }: SearchDropdownProps) {
                     </div>
                     <div className="search-result-category">{product.category}</div>
                     <div className="search-result-price">
-                      S/ {product.price}
+                      {product.discountPrice ? (
+                        <>
+                          <span className="search-result-old-price">S/ {product.price}</span>
+                          <span className="search-result-discount-price">S/ {product.discountPrice}</span>
+                        </>
+                      ) : (
+                        <span>S/ {product.price}</span>
+                      )}
                     </div>
                   </div>
                 </div>
