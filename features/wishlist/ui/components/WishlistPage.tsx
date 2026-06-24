@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import SafeImage, { getFallbackImageUrl } from '@/shared/components/SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 import { useWishlistStore } from '../../hooks/useWishlistStore'
 import { catalogService } from '@/features/catalog/services/catalogService'
 import { Product } from '@/features/catalog/domain/types'
@@ -16,12 +17,17 @@ interface WishlistItemWithProduct extends Product {
 
 interface WishlistPageContentProps {
   sharedItemIds?: string[]
+  initialProducts?: Product[]
 }
 
-function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
+function WishlistPageContent({ sharedItemIds, initialProducts = [] }: WishlistPageContentProps) {
   const wishlistStore = useWishlistStore()
-  const [wishlistProducts, setWishlistProducts] = useState<WishlistItemWithProduct[]>([])
-  const [loading, setLoading] = useState(true)
+  const [wishlistProducts, setWishlistProducts] = useState<WishlistItemWithProduct[]>(() => {
+    if (sharedItemIds && sharedItemIds.length > 0 && initialProducts.length > 0) {
+      return initialProducts.map(p => ({ ...p, quantity: 1 }))
+    }
+    return []
+  })
   const [copiedLink, setCopiedLink] = useState(false)
   const itemsRef = useRef(wishlistStore.items)
   itemsRef.current = wishlistStore.items
@@ -32,32 +38,36 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
   )
 
   useEffect(() => {
+    if (sharedItemIds && sharedItemIds.length > 0 && initialProducts.length > 0) return
+
+    const items = itemsRef.current
+    if ((!sharedItemIds || sharedItemIds.length === 0) && items.length === 0) {
+      setWishlistProducts([])
+      return
+    }
+
     const loadProducts = async () => {
       try {
-        setLoading(true)
-        const allProducts = await catalogService.getProducts()
-
         let itemsToLoad: { id: string; quantity: number }[]
 
         if (sharedItemIds && sharedItemIds.length > 0) {
           itemsToLoad = sharedItemIds.map(id => ({ id, quantity: 1 }))
         } else {
-          itemsToLoad = itemsRef.current
+          itemsToLoad = items
         }
 
-        const wishlistItems = itemsToLoad.map(item => {
-          const product = allProducts.find(p => p.id === item.id)
-          if (product) {
-            return { ...product, quantity: item.quantity }
-          }
-          return null
-        }).filter((p): p is WishlistItemWithProduct => p !== null)
+        const products = await catalogService.getProductsBySlugs(
+          itemsToLoad.map(i => i.id)
+        )
+
+        const wishlistItems = products.map(product => ({
+          ...product,
+          quantity: itemsToLoad.find(i => i.id === product.slug)?.quantity ?? 1,
+        }))
 
         setWishlistProducts(wishlistItems)
       } catch (err) {
         console.error('[Wishlist] Error loading products:', err)
-      } finally {
-        setLoading(false)
       }
     }
 
@@ -137,23 +147,12 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="wishlist-page">
-        <div className="wishlist-header">
-          <h1>Mi lista de deseos</h1>
-        </div>
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Cargando...</p>
-        </div>
-      </div>
-    )
-  }
-
   const isShared = sharedItemIds && sharedItemIds.length > 0
+  const hasItemsInStore = !isShared && wishlistStore.items.length > 0
 
   if (wishlistProducts.length === 0) {
+    if (hasItemsInStore) return null
+
     return (
       <div className="wishlist-page">
         <div className="empty-wishlist">
@@ -162,7 +161,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
           </svg>
           <h3>Tu wishlist está vacía</h3>
           <p>Agrega productos que te encanten y luego pídelos por WhatsApp</p>
-          <Link href="/" className="whatsapp-btn wishlist-back-btn">
+          <Link href="/productos" className="whatsapp-btn wishlist-back-btn">
             Ver Productos
           </Link>
         </div>
@@ -196,10 +195,10 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
       <div className="wishlist-layout">
         <div className="wishlist-main">
           {wishlistProducts.map((item) => {
-            const imageUrl = item.image || getFallbackImageUrl(item.name)
+            const imageUrl = getOptimizedImageUrl(item.image || getFallbackImageUrl(item.name), 144)
 
             return (
-              <div key={item.id} className="wishlist-item">
+              <div key={item.slug} className="wishlist-item">
                 <Link href={`/producto/${item.slug}`}>
                   <SafeImage
                     src={imageUrl}
@@ -304,7 +303,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
               {expandedSections.products && (
                 <div className="summary-collapsible-body">
                   {wishlistProducts.map(item => (
-                    <div key={item.id} className="summary-product-item">
+                    <div key={item.slug} className="summary-product-item">
                       <span className="summary-product-name">{item.name} × {item.quantity}</span>
                       <span className="summary-product-subtotal">S/ {(item.price * item.quantity).toFixed(2)}</span>
                     </div>
@@ -331,7 +330,7 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
                     {discountedItems.map(item => {
                       const discount = (item.price - item.discountPrice!) * item.quantity
                       return (
-                        <div key={item.id} className="summary-discount-item">
+                        <div key={item.slug} className="summary-discount-item">
                           <span className="summary-product-name">{item.name} × {item.quantity}</span>
                           <span className="summary-discount-amount">-S/ {discount.toFixed(2)}</span>
                         </div>
@@ -371,25 +370,15 @@ function WishlistPageContent({ sharedItemIds }: WishlistPageContentProps) {
   )
 }
 
-export default function WishlistPage() {
+export default function WishlistPage({ initialProducts = [] }: { initialProducts?: Product[] }) {
   return (
-    <Suspense fallback={
-      <div className="wishlist-page">
-        <div className="wishlist-header">
-          <h1>Mi lista de deseos</h1>
-        </div>
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Cargando...</p>
-        </div>
-      </div>
-    }>
-      <WishlistPageWrapper />
+    <Suspense fallback={null}>
+      <WishlistPageWrapper initialProducts={initialProducts} />
     </Suspense>
   )
 }
 
-function WishlistPageWrapper() {
+function WishlistPageWrapper({ initialProducts = [] }: { initialProducts?: Product[] }) {
   const searchParams = useSearchParams()
   const itemsParam = searchParams.get('items')
 
@@ -399,5 +388,5 @@ function WishlistPageWrapper() {
       : []
   }, [itemsParam])
 
-  return <WishlistPageContent sharedItemIds={sharedItemIds} />
+  return <WishlistPageContent sharedItemIds={sharedItemIds} initialProducts={initialProducts} />
 }

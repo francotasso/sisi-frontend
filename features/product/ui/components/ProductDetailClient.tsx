@@ -26,7 +26,7 @@ export default function ProductDetailClient({
 }: ProductDetailClientProps) {
   const [product, setProduct] = useState(initialProduct)
   const wishlistStore = useWishlistStore()
-  const inWishlist = wishlistStore.isInWishlist(product.id)
+  const inWishlist = wishlistStore.isInWishlist(product.slug)
   const { addRecentlyViewed } = useRecentlyViewed()
 
   useEffect(() => {
@@ -40,17 +40,11 @@ export default function ProductDetailClient({
     })
   }, [product.id, product.slug, product.name, product.image, product.price, product.discountPrice, addRecentlyViewed])
 
-  useEffect(() => {
-    catalogService.getProductBySlug(product.slug).then(fresh => {
-      if (fresh) setProduct(fresh)
-    }).catch(() => {})
-  }, [product.slug])
-
   const handleToggleWishlist = () => {
     if (inWishlist) {
-      wishlistStore.removeFromWishlist(product.id)
+      wishlistStore.removeFromWishlist(product.slug)
     } else {
-      wishlistStore.addToWishlist(product.id)
+      wishlistStore.addToWishlist(product.slug)
     }
   }
 

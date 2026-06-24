@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import SafeImage from '@/shared/components/SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 
 interface ImageGalleryProps {
   images: string[]
@@ -14,7 +15,7 @@ export default function ImageGallery({ images, alt, fallbackText }: ImageGallery
 
   if (images.length === 0) return null
 
-  const currentImage = images[selectedIndex] || images[0]
+  const currentImage = getOptimizedImageUrl(images[selectedIndex] || images[0], 800)
 
   return (
     <>
@@ -38,7 +39,7 @@ export default function ImageGallery({ images, alt, fallbackText }: ImageGallery
               aria-label={`Ver imagen ${index + 1} de ${images.length}`}
             >
               <SafeImage
-                src={img}
+                src={getOptimizedImageUrl(img, 128)}
                 alt={`${alt} - imagen ${index + 1}`}
                 className="gallery-thumb-image"
                 width={80}

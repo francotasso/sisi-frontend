@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import SafeImage, { getFallbackImageUrl } from './SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 import { useSearch, highlightMatch } from '@/shared/hooks/useSearch'
 
 interface SearchDropdownProps {
@@ -92,12 +93,12 @@ export default function SearchDropdown({ onSelect }: SearchDropdownProps) {
         <div className="search-results">
           {results.length > 0 ? (
             results.slice(0, 8).map((product, index) => {
-              const imageUrl = product.image || getFallbackImageUrl(product.name)
+              const imageUrl = getOptimizedImageUrl(product.image || getFallbackImageUrl(product.name), 96)
               const nameParts = highlightMatch(product.name, query)
 
               return (
                 <div
-                  key={product.id}
+                  key={product.slug}
                   className={`search-result-item ${selectedIndex === index ? 'highlighted' : ''}`}
                   onClick={() => handleSelect(product.slug)}
                   onMouseEnter={() => setSelectedIndex(index)}

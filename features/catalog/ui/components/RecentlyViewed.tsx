@@ -1,19 +1,19 @@
 'use client'
 
 import React from 'react'
-import Link from 'next/link'
 import SafeImage, { getFallbackImageUrl } from '@/shared/components/SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 import { useRecentlyViewed } from '@/shared/hooks/useRecentlyViewed'
 import { useSelector } from 'react-redux'
+import Link from 'next/link'
 import { RootState } from '@/shared/store'
 import { RecentlyViewedItem } from '@/shared/hooks/useRecentlyViewed'
-import { catalogService } from '@/features/catalog/services/catalogService'
 
 const RecentItem = React.memo(function RecentItem({ item }: { item: RecentlyViewedItem }) {
   const inWishlist = useSelector((state: RootState) =>
     state.wishlist.items.some(w => w.id === item.id)
   )
-  const imageUrl = item.image || getFallbackImageUrl(item.name)
+  const imageUrl = getOptimizedImageUrl(item.image || getFallbackImageUrl(item.name), 320)
   const discountPercentage = item.discountPrice
     ? Math.round((1 - item.discountPrice / item.price) * 100)
     : null
@@ -56,7 +56,7 @@ export default function RecentlyViewed() {
       <h3 className="recently-title">Vistos recientemente</h3>
       <div className="recently-scroll">
         {items.map((item) => (
-          <RecentItem key={item.id} item={item} />
+          <RecentItem key={item.slug} item={item} />
         ))}
       </div>
     </div>

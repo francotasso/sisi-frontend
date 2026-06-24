@@ -25,12 +25,13 @@ const product4 = createProduct({
   stock: true,
 })
 
-const mockGetProducts = vi.fn()
+const mockGetProductsBySlugs = vi.fn()
 vi.mock('@/features/catalog/services/catalogService', () => ({
   catalogService: {
-    getProducts: (...args: unknown[]) => mockGetProducts(...args),
+    getProducts: vi.fn(),
     getProductBySlug: vi.fn(),
     getProductById: vi.fn(),
+    getProductsBySlugs: (...args: unknown[]) => mockGetProductsBySlugs(...args),
     isNewProduct: vi.fn(() => false),
     getDiscountPercentage: vi.fn((p: { discountPrice?: number; price: number }) => {
       if (!p.discountPrice || p.discountPrice >= p.price) return null
@@ -67,8 +68,8 @@ vi.mock('next/image', () => ({
 describe('WishlistPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseSearchParams.mockReturnValue(new URLSearchParams('items=3'))
-    mockGetProducts.mockResolvedValue([product3, product4])
+    mockUseSearchParams.mockReturnValue(new URLSearchParams('items=perfume-floral-dulce'))
+    mockGetProductsBySlugs.mockImplementation((_slugs: string[]) => Promise.resolve([product3]))
   })
 
   describe('loading state', () => {
@@ -111,10 +112,11 @@ describe('WishlistPage', () => {
 
   describe('product without discountPrice', () => {
     beforeEach(() => {
-      mockUseSearchParams.mockReturnValue(new URLSearchParams('items=4'))
+      mockUseSearchParams.mockReturnValue(new URLSearchParams('items=crema-hidratante-facial'))
     })
 
     it('displays single price without offer badge after loading', async () => {
+      mockGetProductsBySlugs.mockImplementation(() => Promise.resolve([product4]))
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
@@ -151,7 +153,8 @@ describe('WishlistPage', () => {
     })
 
     it('handles multiple items with mixed discount/no-discount', async () => {
-      mockUseSearchParams.mockReturnValue(new URLSearchParams('items=3,4'))
+      mockUseSearchParams.mockReturnValue(new URLSearchParams('items=perfume-floral-dulce,crema-hidratante-facial'))
+      mockGetProductsBySlugs.mockImplementation(() => Promise.resolve([product3, product4]))
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
@@ -195,7 +198,8 @@ describe('WishlistPage', () => {
     })
 
     it('consolidated WhatsApp message uses discountPrice in totals', async () => {
-      mockUseSearchParams.mockReturnValue(new URLSearchParams('items=3,4'))
+      mockUseSearchParams.mockReturnValue(new URLSearchParams('items=perfume-floral-dulce,crema-hidratante-facial'))
+      mockGetProductsBySlugs.mockImplementation(() => Promise.resolve([product3, product4]))
       const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
       renderWithProviders(<WishlistPage />)
 

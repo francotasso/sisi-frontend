@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react'
 import Link from 'next/link'
 import SafeImage, { getFallbackImageUrl } from '@/shared/components/SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 import { Product } from '../../domain/types'
 import { useWishlistStore } from '@/features/wishlist/hooks/useWishlistStore'
 import { catalogService } from '../../services/catalogService'
@@ -13,20 +14,20 @@ interface ProductCardProps {
 
 function ProductCard({ product }: ProductCardProps) {
   const wishlistStore = useWishlistStore()
-  const inWishlist = useMemo(() => wishlistStore.isInWishlist(product.id), [wishlistStore.items, product.id])
+  const inWishlist = useMemo(() => wishlistStore.isInWishlist(product.slug), [wishlistStore.items, product.slug])
   const isNew = useMemo(() => catalogService.isNewProduct(product), [product.createdAt])
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     if (inWishlist) {
-      wishlistStore.removeFromWishlist(product.id)
+      wishlistStore.removeFromWishlist(product.slug)
     } else {
-      wishlistStore.addToWishlist(product.id)
+      wishlistStore.addToWishlist(product.slug)
     }
   }
 
-  const imageUrl = product.image || getFallbackImageUrl(product.name)
+  const imageUrl = getOptimizedImageUrl(product.image || getFallbackImageUrl(product.name), 400)
 
   const isOutOfStock = product.stock === false
 
@@ -50,7 +51,7 @@ function ProductCard({ product }: ProductCardProps) {
       </div>
       <div className="card-content">
         <span className="product-brand">{product.category}</span>
-        <h2 className="product-title">{product.name}</h2>
+        <h3 className="product-title">{product.name}</h3>
         <div className="price-row">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
             {!isOutOfStock && <span className="card-stock-badge">En stock</span>}

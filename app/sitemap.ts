@@ -5,7 +5,7 @@ import { BASE_URL } from '@/shared/utils/constants'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let products: { slug: string; createdAt: string; stock: boolean }[] = []
   try {
-    products = await catalogService.getProducts()
+    products = await catalogService.getAllProducts()
   } catch {
     /* if API is unavailable, return static pages only */
   }
@@ -17,6 +17,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: product.stock ? 0.8 : 0.5,
   }))
 
+  const listingPages = Array.from({ length: 10 }, (_, i) => ({
+    url: i === 0 ? `${BASE_URL}/productos` : `${BASE_URL}/productos?page=${i + 1}`,
+    lastModified: new Date(),
+    changeFrequency: 'daily' as const,
+    priority: i === 0 ? 0.9 : 0.7 - i * 0.05,
+  }))
+
   return [
     {
       url: BASE_URL,
@@ -24,12 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 1,
     },
-    {
-      url: `${BASE_URL}/productos`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
+    ...listingPages,
     {
       url: `${BASE_URL}/lista-de-deseos`,
       lastModified: new Date(),
@@ -41,6 +43,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.4,
+    },
+    {
+      url: `${BASE_URL}/nosotros`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.3,
     },
     ...productUrls,
   ]

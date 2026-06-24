@@ -9,6 +9,8 @@ interface Props {
   params: Promise<{ slug: string }>
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const product = await catalogService.getProductBySlug(slug)
@@ -54,17 +56,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-export async function generateStaticParams() {
-  try {
-    const products = await catalogService.getProducts()
-    return products.map((product) => ({
-      slug: product.slug,
-    }))
-  } catch {
-    return []
-  }
-}
-
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params
 
@@ -84,6 +75,7 @@ export default async function ProductPage({ params }: Props) {
 
   const breadcrumbJsonLd = {
     '@context': 'https://schema.org',
+    '@id': `${BASE_URL}/producto/${slug}#breadcrumb`,
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${BASE_URL}/` },
@@ -94,6 +86,7 @@ export default async function ProductPage({ params }: Props) {
 
   const productJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
+    '@id': `${BASE_URL}/producto/${slug}#product`,
     '@type': 'Product',
     name: product.name,
     description: product.description,
@@ -142,10 +135,10 @@ export default async function ProductPage({ params }: Props) {
         />
       )}
       <ProductDetailClient
-      product={product}
-      relatedProducts={relatedFiltered}
-      currentProductCategory={categorySlug}
-    />
+        product={product}
+        relatedProducts={relatedFiltered}
+        currentProductCategory={categorySlug}
+      />
     </>
   )
 }

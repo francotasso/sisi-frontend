@@ -3,6 +3,7 @@
 export interface CategoryOption {
   value: string
   label: string
+  description?: string
 }
 
 interface CategoryChipsProps {

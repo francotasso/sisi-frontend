@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import SafeImage from '@/shared/components/SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 
 export default function HeroSection() {
   return (
@@ -23,12 +24,13 @@ export default function HeroSection() {
         </div>
         <div className="hero-image-wrapper">
           <SafeImage
-            src="https://media.admagazine.com/photos/67f56a136699e8d523ad8add/16:9/w_2560%2Cc_limit/Pernille%2520Lind%2520Studio-1.jpg"
+            src={getOptimizedImageUrl("https://media.admagazine.com/photos/67f56a136699e8d523ad8add/16:9/w_2560%2Cc_limit/Pernille%2520Lind%2520Studio-1.jpg", 600)}
             alt="Productos importados en tendencia"
             className="hero-landing-image"
             width={600}
             height={600}
             fallbackText="Sisi"
+            priority
           />
         </div>
       </div>

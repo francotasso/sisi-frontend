@@ -24,9 +24,9 @@ data/                          JSON data sources
   store-info.json              Store branding info
 app/                           Next.js App Router pages
   page.tsx                     Home (catalog)
-  wishlist/page.tsx            Wishlist page
-  product/[slug]/page.tsx      Product detail (SSG, generateStaticParams)
-  api/products/route.ts        JSON products API endpoint
+  page.tsx                     Home (catalog)
+  lista-de-deseos/page.tsx        Wishlist page
+  producto/[slug]/page.tsx        Product detail (SSR, force-dynamic)
   sitemap.ts                   Dynamic sitemap generation
 features/                      Feature modules (domain-driven)
   catalog/                     Catalog listing, filtering, search
@@ -40,9 +40,11 @@ shared/
 ```
 
 ### Data Flow
-- `data/products.json` → `productsRepository.ts` (in-memory JSON read) → `catalogService.ts` → pages
-- `app/api/products/route.ts` exposes same data as JSON endpoint
-- Products are SSG (`generateStaticParams` for `[slug]`)
+- `app/productos/page.tsx` (Server Component) → `catalogService.getProductsPaginated()` → renders `CatalogPage` (Client Component) with pre-fetched data as props
+- Pagination (`?page=N`) triggers full SSR: `router.push()` → new server response with fresh HTML
+- Category/sort changes on "todos" tab → `router.push()` → SSR; on "novedades" tab → client-side filter/sort from cached all-products
+- `app/producto/[slug]/page.tsx`: `dynamic = 'force-dynamic'` — pure SSR per visit
+- `app/productos/page.tsx`: Server Component with `generateMetadata(page)` — dynamic title, canonical, prev/next per page
 
 ### Key Business Rules
 - **New product detection**: `createdAt ≤ 14 days` via `catalogService.isNewProduct()`

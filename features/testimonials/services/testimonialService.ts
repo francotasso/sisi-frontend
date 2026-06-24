@@ -20,9 +20,14 @@ function mapTestimonial(api: ApiTestimonial): Testimonial {
 }
 
 export class TestimonialService {
+  private pendingTestimonials: Promise<Testimonial[]> | null = null
+
   async getTestimonials(limit = 100): Promise<Testimonial[]> {
-    const testimonials = await get<ApiTestimonial[]>(`/testimonials?skip=0&limit=${limit}`)
-    return testimonials.map(mapTestimonial)
+    if (this.pendingTestimonials) return this.pendingTestimonials
+    this.pendingTestimonials = get<ApiTestimonial[]>(`/testimonials?skip=0&limit=${limit}`)
+      .then(items => items.map(mapTestimonial))
+      .finally(() => { this.pendingTestimonials = null })
+    return this.pendingTestimonials
   }
 
   async getTestimonialById(id: string): Promise<Testimonial | undefined> {

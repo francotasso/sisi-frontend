@@ -45,6 +45,9 @@ export interface ApiCategory {
   id: string
   name: string
   slug: string
+  short_description: string
+  image: string
+  created_at: string
 }
 
 export interface ApiStoreContact {
@@ -73,6 +76,16 @@ export interface ApiStore {
   contact: ApiStoreContact
   hours: ApiStoreHour[]
   social_media: ApiStoreSocialMedia[]
+}
+
+export interface ApiBatchProduct {
+  name: string
+  slug: string
+  price: number
+  discount_price: number | null
+  stock: boolean
+  image: string | null
+  category_name: string | null
 }
 
 export interface ApiTestimonial {

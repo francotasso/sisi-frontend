@@ -14,6 +14,18 @@ export const metadata: Metadata = {
   title: 'Contacto - Sisi',
   description: 'Contáctanos vía WhatsApp, teléfono o email. Conoce nuestros horarios y ubicación.',
   alternates: { canonical: '/contacto' },
+  openGraph: {
+    title: 'Contacto - Sisi',
+    description: 'Contáctanos vía WhatsApp, teléfono o email. Conoce nuestros horarios y ubicación.',
+    url: '/contacto',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Contacto - Sisi' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Contacto - Sisi',
+    description: 'Contáctanos vía WhatsApp, teléfono o email. Conoce nuestros horarios y ubicación.',
+    images: ['/og-image.png'],
+  },
 }
 
 export default async function ContactoPage() {

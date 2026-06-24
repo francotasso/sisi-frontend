@@ -2,13 +2,21 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Nosotros',
+  title: 'Nosotros - Sisi',
   description: 'Conoce más sobre Sisi, tu tienda de productos importados en tendencia. Belleza, tecnología, hogar, infantil y más.',
+  alternates: { canonical: '/nosotros' },
   openGraph: {
     title: 'Nosotros - Sisi',
     description: 'Conoce más sobre Sisi, tu tienda de productos importados en tendencia.',
     url: '/nosotros',
     type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Nosotros - Sisi' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Nosotros - Sisi',
+    description: 'Conoce más sobre Sisi, tu tienda de productos importados en tendencia.',
+    images: ['/og-image.png'],
   },
 }
 

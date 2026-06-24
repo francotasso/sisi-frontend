@@ -28,18 +28,6 @@ export default function ProductList({
   totalProducts = 0,
   onPageChange
 }: ProductListProps) {
-  if (loading) {
-    return (
-      <div className="products-wrapper">
-        <div className="product-grid">
-          {Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   if (error) {
     return (
       <div className="empty-state" style={{ padding: '3rem 1rem' }}>
@@ -54,7 +42,7 @@ export default function ProductList({
     )
   }
 
-  if (products.length === 0) {
+  if (!loading && products.length === 0) {
     return (
       <div className="empty-state">
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -123,9 +111,14 @@ export default function ProductList({
         </div>
       )}
       <div className="product-grid">
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+        {loading
+          ? Array.from({ length: PRODUCTS_PER_PAGE }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
+            ))
+          : products.map((product) => (
+              <ProductCard key={product.slug} product={product} />
+            ))
+        }
       </div>
       {totalPages > 1 && (
         <div className="pagination">

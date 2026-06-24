@@ -125,14 +125,14 @@ describe('CatalogService', () => {
 
   describe('getProducts delegation', () => {
     it('calls getAll when no filter is provided', async () => {
-      mockGetAll.mockResolvedValue(mockProducts)
+      mockGetAll.mockResolvedValue({ products: mockProducts, total: mockProducts.length })
       const result = await catalogService.getProducts()
       expect(mockGetAll).toHaveBeenCalled()
       expect(result).toEqual(mockProducts)
     })
 
     it('calls filter when category filter is provided', async () => {
-      mockFilter.mockResolvedValue([productA])
+      mockFilter.mockResolvedValue({ products: [productA], total: 1 })
       const result = await catalogService.getProducts({ category: 'Test Category' })
       expect(mockFilter).toHaveBeenCalled()
       expect(result).toEqual([productA])
@@ -147,7 +147,7 @@ describe('CatalogService', () => {
         id: 'new',
         createdAt: new Date().toISOString(),
       })
-      mockFilter.mockResolvedValue([oldProduct, newProduct])
+      mockFilter.mockResolvedValue({ products: [oldProduct, newProduct], total: 2 })
       const result = await catalogService.getProducts({ isNew: true })
       expect(result).toHaveLength(1)
       expect(result[0].id).toBe('new')

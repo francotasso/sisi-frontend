@@ -16,34 +16,69 @@ function sortToApiSort(sort: SortOption): string | undefined {
 }
 
 export class CatalogService {
-  async getProducts(filter?: ProductsFilter, sort?: SortOption): Promise<Product[]> {
+  async getProductsPaginated(
+    filter?: ProductsFilter,
+    sort?: SortOption,
+    page?: number,
+  ): Promise<{ products: Product[]; total: number }> {
     const apiSort = sort ? sortToApiSort(sort) : undefined
 
-    let products: Product[]
+    let result: { products: Product[]; total: number }
 
     if (filter) {
       const filterWithSort: ProductsFilter = { ...filter, sortBy: apiSort }
-      products = await productsRepository.filter(filterWithSort, apiSort)
+      result = await productsRepository.filter(filterWithSort, apiSort, page)
     } else {
-      products = await productsRepository.getAll(apiSort)
+      result = await productsRepository.getAll(apiSort, page)
     }
 
     if (filter?.isNew) {
-      products = products.filter(p => this.isNewProduct(p))
+      result.products = result.products.filter(p => this.isNewProduct(p))
+      result.total = result.products.length
     }
 
+    return result
+  }
+
+  async getProducts(filter?: ProductsFilter, sort?: SortOption): Promise<Product[]> {
+    const { products } = await this.getProductsPaginated(filter, sort)
     return products
+  }
+
+  async getAllProducts(filter?: ProductsFilter, sort?: SortOption): Promise<Product[]> {
+    let page = 1
+    const all: Product[] = []
+    let total = 0
+    do {
+      const result = await this.getProductsPaginated(filter, sort, page)
+      all.push(...result.products)
+      total = result.total
+      page++
+    } while (all.length < total)
+    return all
+  }
+
+  async getNewestProducts(limit = 4): Promise<Product[]> {
+    return productsRepository.getNewest(limit)
+  }
+
+  async getBestSellersProducts(limit = 4): Promise<Product[]> {
+    return productsRepository.getBestSellers(limit)
   }
 
   async getProductById(id: string): Promise<Product | undefined> {
     return productsRepository.getById(id)
   }
 
+  async getProductsBySlugs(slugs: string[]): Promise<Product[]> {
+    return productsRepository.getBySlugs(slugs)
+  }
+
   async getProductBySlug(slug: string): Promise<Product | undefined> {
     return productsRepository.getBySlug(slug)
   }
 
-  async getCategories(): Promise<{ value: string; label: string }[]> {
+  async getCategories(): Promise<{ value: string; label: string; description: string; image: string }[]> {
     return productsRepository.getCategories()
   }
 

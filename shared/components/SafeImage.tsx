@@ -41,7 +41,8 @@ export default function SafeImage({
   const [hasError, setHasError] = useState(false)
 
   const isPlaceholder = imgSrc.startsWith('https://placehold.co/')
-  const shouldUnoptimized = unoptimized ?? isPlaceholder
+  const isCloudinary = imgSrc.includes('res.cloudinary.com')
+  const shouldUnoptimized = unoptimized ?? isPlaceholder ?? isCloudinary
 
   const handleError = () => {
     if (!hasError) {

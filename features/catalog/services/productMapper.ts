@@ -1,6 +1,7 @@
 import type {
   ApiProductListItem,
   ApiProductDetail,
+  ApiBatchProduct,
 } from '@/features/catalog/api/types'
 import type { Product, ProductFAQ } from '@/features/catalog/domain/types'
 
@@ -63,6 +64,29 @@ export function mapProductDetail(api: ApiProductDetail): Product {
       includes: api.specs.includes ?? undefined,
     },
     faq: api.faqs.map(mapFAQ),
+  }
+}
+
+export function mapBatchProduct(api: ApiBatchProduct): Product {
+  return {
+    id: api.slug,
+    sku: '',
+    slug: api.slug,
+    name: api.name,
+    price: api.price,
+    discountPrice: api.discount_price ?? undefined,
+    category: api.category_name ?? '',
+    categorySlug: undefined,
+    image: api.image ?? '',
+    description: '',
+    shortDescription: '',
+    stock: api.stock,
+    stockCount: api.stock ? undefined : 0,
+    bestSeller: false,
+    createdAt: new Date().toISOString(),
+    updatedAt: undefined,
+    specs: { brand: '', type: '', size: '' },
+    faq: [],
   }
 }
 

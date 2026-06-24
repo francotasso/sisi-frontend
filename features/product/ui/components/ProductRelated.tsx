@@ -3,6 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import SafeImage, { getFallbackImageUrl } from '@/shared/components/SafeImage'
+import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
 import { Product } from '@/features/catalog/domain/types'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '@/shared/store'
@@ -15,17 +16,17 @@ interface RelatedItemProps {
 const RelatedItem = React.memo(function RelatedItem({ product }: RelatedItemProps) {
   const dispatch = useDispatch()
   const inWishlist = useSelector((state: RootState) =>
-    state.wishlist.items.some(w => w.id === product.id)
+    state.wishlist.items.some(w => w.id === product.slug)
   )
-  const imageUrl = product.image || getFallbackImageUrl(product.name)
+  const imageUrl = getOptimizedImageUrl(product.image || getFallbackImageUrl(product.name), 320)
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     if (inWishlist) {
-      dispatch(removeFromWishlist(product.id))
+      dispatch(removeFromWishlist(product.slug))
     } else {
-      dispatch(addToWishlist(product.id))
+      dispatch(addToWishlist(product.slug))
     }
   }
 
@@ -79,7 +80,7 @@ export default function ProductRelated({ products, currentProductSlug, currentPr
       <h3 className="related-title">Productos Relacionados</h3>
       <div className="related-grid">
         {relatedProducts.map((product) => (
-          <RelatedItem key={product.id} product={product} />
+          <RelatedItem key={product.slug} product={product} />
         ))}
       </div>
     </div>

@@ -83,34 +83,40 @@ function mapSocial(platform: string, url: string): SocialEntry {
 }
 
 export class StoreService {
+  private pendingStore: Promise<StoreInfo> | null = null
+
   async getStoreInfo(): Promise<StoreInfo> {
-    const api = await get<ApiStore>('/store')
+    if (this.pendingStore) return this.pendingStore
+    this.pendingStore = get<ApiStore>('/store')
+      .then(api => {
+        const hours: Record<string, HourEntry> = {}
+        for (const h of api.hours) {
+          const key = DAY_MAP[h.day] || h.day.toLowerCase()
+          hours[key] = mapHour(h)
+        }
 
-    const hours: Record<string, HourEntry> = {}
-    for (const h of api.hours) {
-      const key = DAY_MAP[h.day] || h.day.toLowerCase()
-      hours[key] = mapHour(h)
-    }
+        const socialMedia: Record<string, SocialEntry> = {}
+        for (const s of api.social_media) {
+          const key = PLATFORM_MAP[s.platform] || s.platform.toLowerCase()
+          socialMedia[key] = mapSocial(s.platform, s.url)
+        }
 
-    const socialMedia: Record<string, SocialEntry> = {}
-    for (const s of api.social_media) {
-      const key = PLATFORM_MAP[s.platform] || s.platform.toLowerCase()
-      socialMedia[key] = mapSocial(s.platform, s.url)
-    }
-
-    return {
-      storeName: api.store_name,
-      description: api.description,
-      hours,
-      contact: {
-        phone: api.contact.phone,
-        whatsapp: api.contact.whatsapp,
-        email: api.contact.email,
-        address: api.contact.address,
-        addressMap: api.contact.address_map,
-      },
-      socialMedia,
-    }
+        return {
+          storeName: api.store_name,
+          description: api.description,
+          hours,
+          contact: {
+            phone: api.contact.phone,
+            whatsapp: api.contact.whatsapp,
+            email: api.contact.email,
+            address: api.contact.address,
+            addressMap: api.contact.address_map,
+          },
+          socialMedia,
+        }
+      })
+      .finally(() => { this.pendingStore = null })
+    return this.pendingStore
   }
 
   async getStoreInfoBasic(): Promise<{ storeName: string; description: string; contact: StoreInfo['contact']; socialMedia: StoreInfo['socialMedia'] }> {

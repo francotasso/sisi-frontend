@@ -46,6 +46,13 @@ export const metadata: Metadata = {
     siteName: 'Sisi',
     locale: 'es_PE',
     type: 'website',
+    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Sisi' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Sisi - Productos importados en tendencia',
+    description: 'Sisi — Productos importados en tendencia. Belleza, tecnología, hogar, infantil y más.',
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
@@ -67,6 +74,7 @@ export default async function RootLayout({
 
   const organizationJsonLd = {
     '@context': 'https://schema.org',
+    '@id': `${BASE_URL}#organization`,
     '@type': 'Store',
     name: storeData?.storeName ?? 'Sisi',
     description: storeData?.description ?? 'Productos importados en tendencia',
