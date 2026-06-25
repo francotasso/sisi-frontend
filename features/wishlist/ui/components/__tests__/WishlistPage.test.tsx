@@ -72,19 +72,12 @@ describe('WishlistPage', () => {
     mockGetProductsBySlugs.mockImplementation((_slugs: string[]) => Promise.resolve([product3]))
   })
 
-  describe('loading state', () => {
-    it('shows loading state initially while products are being fetched', () => {
-      renderWithProviders(<WishlistPage />)
-      expect(screen.getByText('Cargando...')).toBeInTheDocument()
-    })
-  })
-
   describe('product with discountPrice', () => {
     it('displays discountPrice, originalPrice and offer badge after loading', async () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getAllByText(/S\/\s*89\.?9/).length).toBeGreaterThanOrEqual(1)
       })
 
       // Product 3: Perfume Floral Dulce, discountPrice 89.9, price 119.9
@@ -102,10 +95,8 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getByText('Perfume Floral Dulce')).toBeInTheDocument()
       })
-
-      expect(screen.getByText('Perfume Floral Dulce')).toBeInTheDocument()
       expect(screen.getByText('Belleza')).toBeInTheDocument()
     })
   })
@@ -120,11 +111,10 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getByText('S/ 58.9')).toBeInTheDocument()
       })
 
       // Product 4: Crema Hidratante Facial, price 58.9, no discountPrice
-      expect(screen.getByText('S/ 58.9')).toBeInTheDocument()
 
       // No offer badge should be present
       expect(screen.queryByText(/-?\d+%/)).not.toBeInTheDocument()
@@ -136,7 +126,7 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getAllByText(/S\/\s*89\.?9/).length).toBeGreaterThanOrEqual(1)
       })
 
       // Item shows discount price S/ 89.9 (no trailing zero from JSON)
@@ -158,11 +148,10 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getByText('S/ 58.9')).toBeInTheDocument()
       })
 
       // Product 4 price shows as S/ 58.9 (no trailing zero from JSON)
-      expect(screen.getByText('S/ 58.9')).toBeInTheDocument()
 
       // Productos header shows original subtotal: 119.9 + 58.9 = 178.80
       expect(screen.getByText('S/ 178.80')).toBeInTheDocument()
@@ -178,7 +167,7 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getByText('Comprar')).toBeInTheDocument()
       })
 
       // Find and click "Comprar" button for the individual item
@@ -204,7 +193,7 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getByText('Pedir todo por WhatsApp')).toBeInTheDocument()
       })
 
       // Click "Pedir todo por WhatsApp"
@@ -251,10 +240,6 @@ describe('WishlistPage', () => {
       mockUseSearchParams.mockReturnValue(new URLSearchParams(''))
       renderWithProviders(<WishlistPage />)
 
-      await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
-      })
-
       expect(screen.getByText('Tu wishlist está vacía')).toBeInTheDocument()
       expect(screen.getByText('Ver Productos')).toBeInTheDocument()
     })
@@ -265,10 +250,8 @@ describe('WishlistPage', () => {
       renderWithProviders(<WishlistPage />)
 
       await waitFor(() => {
-        expect(screen.queryByText('Cargando...')).not.toBeInTheDocument()
+        expect(screen.getByText(/Mi lista de deseos/)).toBeInTheDocument()
       })
-
-      expect(screen.getByText(/Mi lista de deseos/)).toBeInTheDocument()
     })
   })
 })

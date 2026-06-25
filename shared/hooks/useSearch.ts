@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Product } from '@/features/catalog/domain/types'
+import { useState, useEffect, useCallback } from 'react'
+import type { Product } from '@/features/catalog/domain/types'
 import { catalogService } from '@/features/catalog/services/catalogService'
 import { useDebounce } from './useDebounce'
 import { SEARCH_DEBOUNCE_MS } from '@/shared/utils/constants'
@@ -20,51 +20,37 @@ export function useSearch(): UseSearchResult {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasSearched, setHasSearched] = useState(false)
-  const [allProducts, setAllProducts] = useState<Product[]>([])
 
   const debouncedQuery = useDebounce(query, SEARCH_DEBOUNCE_MS)
 
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const products = await catalogService.getProducts()
-        setAllProducts(products)
-      } catch (err) {
-        console.error('[Search] Error loading products:', err)
-      }
-    }
-    loadProducts()
-  }, [])
-
-  const searchProducts = useCallback((searchQuery: string) => {
-    if (!searchQuery.trim()) {
+    if (!debouncedQuery.trim()) {
       setResults([])
       setHasSearched(false)
       return
     }
 
-    setLoading(true)
-    setError(null)
-    setHasSearched(true)
+    let cancelled = false
 
-    const normalizedQuery = searchQuery.toLowerCase().trim()
-    
-        const filtered = allProducts.filter(product => {
-      const nameMatch = product.name.toLowerCase().includes(normalizedQuery)
-      const categoryMatch = product.category.toLowerCase().includes(normalizedQuery)
-      const brandMatch = product.specs.brand?.toLowerCase().includes(normalizedQuery)
-      const descriptionMatch = product.description?.toLowerCase().includes(normalizedQuery)
+    const run = async () => {
+      setLoading(true)
+      setError(null)
+      setHasSearched(true)
 
-      return nameMatch || categoryMatch || brandMatch || descriptionMatch
-    })
+      try {
+        const items = await catalogService.searchProducts(debouncedQuery)
+        if (!cancelled) setResults(items)
+      } catch {
+        if (!cancelled) setError('Error al buscar productos')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
 
-    setResults(filtered)
-    setLoading(false)
-  }, [allProducts])
+    run()
 
-  useEffect(() => {
-    searchProducts(debouncedQuery)
-  }, [debouncedQuery, searchProducts])
+    return () => { cancelled = true }
+  }, [debouncedQuery])
 
   const clearSearch = useCallback(() => {
     setQuery('')

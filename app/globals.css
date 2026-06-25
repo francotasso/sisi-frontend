@@ -3033,23 +3033,6 @@ footer {
   background: var(--bg-color);
 }
 
-.category-scroll {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;
-  margin-top: 2rem;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  cursor: default;
-}
-
-.category-scroll::-webkit-scrollbar {
-  display: none;
-}
-
 .carousel-pills {
   display: flex;
   justify-content: center;
@@ -3080,11 +3063,6 @@ footer {
   .carousel-pills {
     display: none;
   }
-}
-
-.category-scroll > .category-card {
-  flex: 0 0 min(280px, 70vw);
-  scroll-snap-align: start;
 }
 
 .category-card {
@@ -3166,32 +3144,74 @@ footer {
   width: 80%;
 }
 
-/* ===== HOME PRODUCT GRID ===== */
-.home-product-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.2rem;
+/* ===== CAROUSEL ===== */
+.carousel-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 1.5rem;
 }
 
-.home-product-scroll {
+.carousel-container {
+  flex: 1;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.carousel-track {
   display: flex;
   gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 8px;
-  margin-top: 1.5rem;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  will-change: transform;
 }
 
-.home-product-scroll::-webkit-scrollbar {
-  display: none;
+.carousel-track > * {
+  flex: 0 0 calc((100% - 3 * 1rem) / 4);
+  min-width: 0;
 }
 
-.home-product-scroll > * {
-  flex: 0 0 min(260px, 65vw);
-  scroll-snap-align: start;
+.carousel-arrow {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid var(--border-color, #e0d0d0);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: background 0.2s;
+  padding: 0;
+  color: var(--text-color);
+}
+
+.carousel-arrow:hover {
+  background: #f5f5f5;
+}
+
+@media (max-width: 768px) {
+  .carousel-wrapper {
+    margin-top: 1rem;
+  }
+
+  .carousel-track > * {
+    flex: 0 0 calc((100% - 1 * 1rem) / 2);
+  }
+
+  .carousel-arrow {
+    display: none;
+  }
+}
+
+.testimonials-section .carousel-track > * {
+  flex: 0 0 calc((100% - 2 * 1rem) / 3);
+}
+
+@media (max-width: 480px) {
+  .testimonials-section .carousel-track > * {
+    flex: 0 0 100%;
+  }
 }
 
 .new-arrivals-section {
@@ -3725,37 +3745,8 @@ footer {
   margin-top: 0.4rem;
 }
 
-.testimonials-carousel {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.testimonial-nav {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 9999px;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-  color: var(--text-secondary);
-}
-
-.testimonial-nav:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  flex: 1;
+.testimonials-section .carousel-wrapper {
+  margin-top: 0;
 }
 
 .testimonial-card {
@@ -3824,12 +3815,7 @@ footer {
   margin-top: 1px;
 }
 
-.testimonial-dots {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 1.5rem;
-}
+
 
 .testimonial-dot {
   width: 8px;
@@ -3981,10 +3967,6 @@ footer {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .home-product-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
   .benefits-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
@@ -4000,14 +3982,6 @@ footer {
 
   .section-container {
     padding: 2.5rem 1rem;
-  }
-
-  .testimonials-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .testimonial-nav {
-    display: none;
   }
 
   .about-reasons {
@@ -4036,16 +4010,7 @@ footer {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .home-product-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.7rem;
-  }
-
   .benefits-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .testimonials-grid {
     grid-template-columns: 1fr;
   }
 

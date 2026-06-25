@@ -199,7 +199,7 @@ describe('ProductDetailClient', () => {
       const nameElements = screen.getAllByText('Premium Lipstick')
       expect(nameElements.length).toBeGreaterThanOrEqual(1)
       expect(nameElements[0]).toBeInTheDocument()
-      expect(screen.getByText('Producto')).toBeInTheDocument()
+      expect(screen.getByText('Productos')).toBeInTheDocument()
     })
 
     it('renders stock badge with correct text for in-stock product', () => {
