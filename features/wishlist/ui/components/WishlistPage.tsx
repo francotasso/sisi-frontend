@@ -86,8 +86,10 @@ function WishlistPageContent({ sharedItemIds, initialProducts = [] }: WishlistPa
 
   const effectivePrice = (p: WishlistItemWithProduct) => p.discountPrice ?? p.price
 
-  const handleRemove = (productId: string) => {
-    wishlistStore.removeFromWishlist(productId)
+  const handleRemove = (productId: string, productName: string) => {
+    if (window.confirm(`¿Eliminar "${productName}" de tu lista de deseos?`)) {
+      wishlistStore.removeFromWishlist(productId)
+    }
   }
 
   const sendItemWhatsApp = (item: WishlistItemWithProduct) => {
@@ -114,7 +116,9 @@ function WishlistPageContent({ sharedItemIds, initialProducts = [] }: WishlistPa
   const effectiveTotal = originalSubtotal - totalDiscount
 
   const handleClearWishlist = () => {
-    wishlistStore.clearWishlist()
+    if (window.confirm('¿Vaciar toda tu lista de deseos?')) {
+      wishlistStore.clearWishlist()
+    }
   }
 
   const sendConsolidatedWhatsApp = () => {
@@ -217,11 +221,11 @@ function WishlistPageContent({ sharedItemIds, initialProducts = [] }: WishlistPa
                   </Link>
                   <div className="wishlist-item-price">
                     {item.discountPrice ? (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ color: 'var(--accent)', fontWeight: 700 }}>S/ {item.discountPrice}</span>
+                      <div className="wishlist-price-row">
+                        <span className="wishlist-discount-price">S/ {item.discountPrice}</span>
                         <span className="original-price">S/ {item.price}</span>
                         {catalogService.getDiscountPercentage(item) && (
-                          <span className="offer-badge-detail" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>-{catalogService.getDiscountPercentage(item)}%</span>
+                          <span className="wishlist-offer-badge">-{catalogService.getDiscountPercentage(item)}%</span>
                         )}
                       </div>
                     ) : (
@@ -270,7 +274,7 @@ function WishlistPageContent({ sharedItemIds, initialProducts = [] }: WishlistPa
 
                   <button
                     className="wishlist-remove-btn"
-                    onClick={() => handleRemove(item.id)}
+                    onClick={() => handleRemove(item.id, item.name)}
                     aria-label={`Eliminar ${item.name} de la lista de deseos`}
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

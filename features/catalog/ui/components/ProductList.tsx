@@ -17,6 +17,13 @@ interface ProductListProps {
   onPageChange?: (page: number) => void
 }
 
+const SORT_OPTIONS: { value: SortOption; label: string }[] = [
+  { value: 'newest', label: 'Más nuevos' },
+  { value: 'price-low', label: 'Precio ↑' },
+  { value: 'price-high', label: 'Precio ↓' },
+  { value: 'name', label: 'A-Z' },
+]
+
 export default function ProductList({ 
   products, 
   loading,
@@ -96,17 +103,17 @@ export default function ProductList({
       {sort && onSortChange && (
         <div className="sort-bar">
           <span className="results-count">{totalProducts} productos</span>
-          <div className="sort-select">
-            <label>Ordenar por:</label>
-            <select 
-              value={sort} 
-              onChange={(e) => onSortChange(e.target.value as SortOption)}
-            >
-              <option value="newest">Más recientes</option>
-              <option value="price-low">Precio: menor a mayor</option>
-              <option value="price-high">Precio: mayor a menor</option>
-              <option value="name">Nombre: A-Z</option>
-            </select>
+          <div className="sort-buttons">
+            {SORT_OPTIONS.map(opt => (
+              <button
+                key={opt.value}
+                className={`sort-btn${sort === opt.value ? ' active' : ''}`}
+                onClick={() => onSortChange(opt.value)}
+                aria-pressed={sort === opt.value}
+              >
+                {opt.label}
+              </button>
+            ))}
           </div>
         </div>
       )}

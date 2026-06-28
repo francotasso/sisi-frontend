@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import Link from 'next/link'
 import SafeImage, { getFallbackImageUrl } from '@/shared/components/SafeImage'
 import { getOptimizedImageUrl } from '@/shared/utils/cloudinary'
@@ -17,7 +17,7 @@ function ProductCard({ product }: ProductCardProps) {
   const inWishlist = useMemo(() => wishlistStore.isInWishlist(product.slug), [wishlistStore.items, product.slug])
   const isNew = useMemo(() => catalogService.isNewProduct(product), [product.createdAt])
 
-  const handleToggleWishlist = (e: React.MouseEvent) => {
+  const handleToggleWishlist = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     if (inWishlist) {
@@ -25,7 +25,17 @@ function ProductCard({ product }: ProductCardProps) {
     } else {
       wishlistStore.addToWishlist(product.slug)
     }
-  }
+  }, [inWishlist, product.slug, wishlistStore])
+
+  const handleOverlayWishlist = useCallback((e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (inWishlist) {
+      wishlistStore.removeFromWishlist(product.slug)
+    } else {
+      wishlistStore.addToWishlist(product.slug)
+    }
+  }, [inWishlist, product.slug, wishlistStore])
 
   const imageUrl = getOptimizedImageUrl(product.image || getFallbackImageUrl(product.name), 400)
 
@@ -43,6 +53,24 @@ function ProductCard({ product }: ProductCardProps) {
           sizes="(max-width: 700px) 50vw, 25vw"
         />
 
+        <div className="card-overlay">
+          <span className="card-overlay-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+            Ver producto
+          </span>
+          <button
+            className={`card-overlay-wishlist ${inWishlist ? 'in-wishlist' : ''}`}
+            onClick={handleOverlayWishlist}
+            aria-label={inWishlist ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+          >
+            <svg viewBox="0 0 24 24" fill={inWishlist ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+
         {isNew && <div className="new-badge">NUEVO</div>}
         {isOutOfStock && <div className="soldout-badge">Agotado</div>}
         {catalogService.getDiscountPercentage(product) && (
@@ -53,10 +81,10 @@ function ProductCard({ product }: ProductCardProps) {
         <span className="product-brand">{product.category}</span>
         <h3 className="product-title">{product.name}</h3>
         <div className="price-row">
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+          <div className="price-col">
             {!isOutOfStock && <span className="card-stock-badge">En stock</span>}
             {product.discountPrice ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <div className="price-discount-row">
                 <span className="product-price">S/ {product.discountPrice}</span>
                 <span className="original-price">S/ {product.price}</span>
               </div>

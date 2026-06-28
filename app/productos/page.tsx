@@ -38,6 +38,7 @@ export default async function ProductosPage({ searchParams }: Props) {
   const sort = (params.sort as SortOption) || 'newest'
   const search = (params.search as string) || ''
   const category = (params.category as string) || ''
+  const novedades = params.novedades === 'true'
 
   const filter = category ? { category } : search ? { search } : undefined
 
@@ -66,6 +67,7 @@ export default async function ProductosPage({ searchParams }: Props) {
       initialCategory={category}
       initialSearch={search}
       serverCategories={serverCategories}
+      initialNovedades={novedades}
     />
   )
 }

@@ -5,6 +5,7 @@ import BestSellers from '@/features/home/ui/components/BestSellers'
 import NewArrivals from '@/features/home/ui/components/NewArrivals'
 import BenefitsGrid from '@/features/home/ui/components/BenefitsGrid'
 import TestimonialsSection from '@/shared/components/TestimonialsSection'
+import GeneralFAQ from '@/shared/components/GeneralFAQ'
 import { catalogService } from '@/features/catalog/services/catalogService'
 import type { Product } from '@/features/catalog/domain/types'
 
@@ -43,10 +44,11 @@ export default async function HomePage() {
 
   return (
     <>
-      <HeroSection />
+      <HeroSection products={bestSellers} />
       <CategoryGrid initialCategories={categories} />
       <BestSellers initialProducts={bestSellers} />
       <NewArrivals initialProducts={newArrivals} />
+      <GeneralFAQ />
       <TestimonialsSection />
       <BenefitsGrid />
     </>

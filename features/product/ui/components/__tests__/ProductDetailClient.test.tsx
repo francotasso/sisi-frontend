@@ -64,8 +64,10 @@ describe('ProductDetailClient', () => {
         <ProductDetailClient product={product} {...baseProps} />
       )
 
-      expect(screen.getByText('S/ 75')).toBeInTheDocument()
-      expect(screen.getByText('S/ 100')).toBeInTheDocument()
+      // S/ 75 appears in sticky bar, main content, and mobile sticky bar
+      expect(screen.getAllByText('S/ 75').length).toBeGreaterThan(0)
+      // S/ 100 appears in both sticky bar and original price — use getAllByText
+      expect(screen.getAllByText('S/ 100').length).toBeGreaterThan(0)
       expect(screen.getByText('-25%')).toBeInTheDocument()
     })
 
@@ -75,11 +77,12 @@ describe('ProductDetailClient', () => {
         <ProductDetailClient product={product} {...baseProps} />
       )
 
-      expect(screen.getByText('S/ 100')).toBeInTheDocument()
+      // S/ 100 appears in both sticky bar and content — use getAllByText
+      expect(screen.getAllByText('S/ 100').length).toBeGreaterThan(0)
       expect(screen.queryByText('-25%')).not.toBeInTheDocument()
-      // Only one price element
+      // Only one price element in main content
       const prices = screen.getAllByText(/S\/ \d+/)
-      expect(prices).toHaveLength(1)
+      expect(prices).toHaveLength(3) // sticky bar + main price + mobile sticky bar
     })
 
     it('renders offer badge with offer-badge-detail class when discountPrice exists', () => {
@@ -111,7 +114,7 @@ describe('ProductDetailClient', () => {
         <ProductDetailClient product={product} {...baseProps} />
       )
 
-      const whatsappBtn = screen.getByRole('button', { name: /comprar por whatsapp/i })
+      const [whatsappBtn] = screen.getAllByRole('button', { name: /comprar por whatsapp/i })
       fireEvent.click(whatsappBtn)
 
       expect(openSpy).toHaveBeenCalledTimes(1)
@@ -134,7 +137,7 @@ describe('ProductDetailClient', () => {
         <ProductDetailClient product={product} {...baseProps} />
       )
 
-      const whatsappBtn = screen.getByRole('button', { name: /comprar por whatsapp/i })
+      const [whatsappBtn] = screen.getAllByRole('button', { name: /comprar por whatsapp/i })
       fireEvent.click(whatsappBtn)
 
       expect(openSpy).toHaveBeenCalledTimes(1)
@@ -157,7 +160,7 @@ describe('ProductDetailClient', () => {
         <ProductDetailClient product={product} {...baseProps} />
       )
 
-      const whatsappBtn = screen.getByRole('button', { name: /comprar por whatsapp/i })
+      const [whatsappBtn] = screen.getAllByRole('button', { name: /comprar por whatsapp/i })
       fireEvent.click(whatsappBtn)
 
       expect(openSpy).toHaveBeenCalledWith(expect.any(String), '_blank')
@@ -183,7 +186,7 @@ describe('ProductDetailClient', () => {
         <ProductDetailClient product={product} {...baseProps} />
       )
 
-      const whatsappBtn = screen.getByRole('button', { name: /comprar por whatsapp/i })
+      const [whatsappBtn] = screen.getAllByRole('button', { name: /comprar por whatsapp/i })
       expect(whatsappBtn).not.toBeDisabled()
     })
   })

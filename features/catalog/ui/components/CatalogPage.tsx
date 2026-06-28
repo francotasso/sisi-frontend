@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, useTransition } from 'react'
+import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import type { CategoryOption } from '../../hooks/useCatalog'
 import ProductList from './ProductList'
@@ -11,8 +12,6 @@ import { Product, SortOption } from '../../domain/types'
 import { PRODUCTS_PER_PAGE } from '@/shared/utils/constants'
 import { catalogService } from '../../services/catalogService'
 
-type TabType = 'todos' | 'novedades'
-
 type CatalogPageProps = {
   initialProducts: Product[]
   initialTotal: number
@@ -21,6 +20,7 @@ type CatalogPageProps = {
   initialCategory: string
   initialSearch: string
   serverCategories: CategoryOption[]
+  initialNovedades?: boolean
 }
 
 export default function CatalogPage({
@@ -31,22 +31,58 @@ export default function CatalogPage({
   initialCategory,
   initialSearch,
   serverCategories,
+  initialNovedades = false,
 }: CatalogPageProps) {
   const router = useRouter()
   const pathname = usePathname()
+  const [isPending, startTransition] = useTransition()
 
   const [products, setProducts] = useState(initialProducts)
   const [total, setTotal] = useState(initialTotal)
   const [sort, setSort] = useState<SortOption>(initialSort)
   const [selectedCategory, setSelectedCategory] = useState(initialCategory)
   const [currentPage, setCurrentPage] = useState(initialPage)
-  const [activeTab, setActiveTab] = useState<TabType>('todos')
+  const [showNovedades, setShowNovedades] = useState(initialNovedades)
   const [loading, setLoading] = useState(initialProducts.length === 0)
   const [error, setError] = useState<string | null>(null)
   const [categories, setCategories] = useState(serverCategories)
   const [allProductsCache, setAllProductsCache] = useState<Product[] | null>(null)
 
   const catalogRef = useRef<HTMLDivElement>(null)
+
+  // Fetch all products when novedades mode is on
+  useEffect(() => {
+    if (!showNovedades) return
+
+    setSelectedCategory('')
+    setCurrentPage(1)
+
+    if (allProductsCache) {
+      setProducts(allProductsCache)
+      setTotal(allProductsCache.length)
+      return
+    }
+
+    let cancelled = false
+    const doFetch = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const all = await catalogService.getAllProducts(undefined, sort)
+        if (!cancelled) {
+          setAllProductsCache(all)
+          setProducts(all)
+          setTotal(all.length)
+        }
+      } catch {
+        if (!cancelled) setError('Error al cargar los productos')
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    doFetch()
+    return () => { cancelled = true }
+  }, [showNovedades, allProductsCache, sort])
 
   // Fetch initial data on mount (no server-side data fetching)
   useEffect(() => {
@@ -78,50 +114,14 @@ export default function CatalogPage({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Fetch all products when entering "novedades" tab
-  useEffect(() => {
-    if (activeTab !== 'novedades') return
-
-    setSelectedCategory('')
-    setCurrentPage(1)
-
-    if (allProductsCache) {
-      setProducts(allProductsCache)
-      setTotal(allProductsCache.length)
-      return
-    }
-
-    let cancelled = false
-    const doFetch = async () => {
-      setLoading(true)
-      setError(null)
-      try {
-        const all = await catalogService.getAllProducts(undefined, sort)
-        if (!cancelled) {
-          setAllProductsCache(all)
-          setProducts(all)
-          setTotal(all.length)
-        }
-      } catch {
-        if (!cancelled) setError('Error al cargar los productos')
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-    doFetch()
-    return () => { cancelled = true }
-  }, [activeTab, allProductsCache, sort])
-
   const newCount = useMemo(() => {
-    return products.filter(p => catalogService.isNewProduct(p)).length
-  }, [products])
+    return (allProductsCache ?? products).filter(p => catalogService.isNewProduct(p)).length
+  }, [allProductsCache, products])
 
   const displayedProducts = useMemo(() => {
-    if (activeTab === 'todos') {
-      return products
-    }
+    if (!showNovedades || !allProductsCache) return products
 
-    let filtered = products
+    let filtered = allProductsCache
     if (selectedCategory) {
       filtered = filtered.filter(p => (p.categorySlug ?? p.category) === selectedCategory)
     }
@@ -139,18 +139,34 @@ export default function CatalogPage({
         break
     }
     return sorted
-  }, [products, activeTab, sort, selectedCategory])
+  }, [products, showNovedades, allProductsCache, sort, selectedCategory])
 
-  const totalPages = activeTab === 'novedades'
+  const totalPages = showNovedades && allProductsCache
     ? Math.ceil(displayedProducts.length / PRODUCTS_PER_PAGE)
     : Math.ceil(total / PRODUCTS_PER_PAGE)
 
-  const paginatedProducts = activeTab === 'novedades'
+  const paginatedProducts = showNovedades && allProductsCache
     ? displayedProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE)
     : products
 
+  const handleNovedadesToggle = useCallback(() => {
+    const next = !showNovedades
+    setShowNovedades(next)
+    if (!next) {
+      setAllProductsCache(null)
+    }
+    setCurrentPage(1)
+    setError(null)
+
+    const params = new URLSearchParams()
+    if (selectedCategory) params.set('category', selectedCategory)
+    if (sort !== 'newest') params.set('sort', sort)
+    if (next) params.set('novedades', 'true')
+    startTransition(() => { router.push(`${pathname}?${params.toString()}`) })
+  }, [showNovedades, selectedCategory, sort, pathname, router, startTransition])
+
   const handleCategoryChange = useCallback((category: string) => {
-    if (activeTab === 'novedades') {
+    if (showNovedades && allProductsCache) {
       setSelectedCategory(category)
       setCurrentPage(1)
       return
@@ -172,11 +188,11 @@ export default function CatalogPage({
     const params = new URLSearchParams()
     if (category) params.set('category', category)
     if (sort !== 'newest') params.set('sort', sort)
-    router.push(`${pathname}?${params.toString()}`)
-  }, [activeTab, sort, pathname, router])
+    startTransition(() => { router.push(`${pathname}?${params.toString()}`) })
+  }, [showNovedades, allProductsCache, sort, pathname, router, startTransition])
 
   const handleSortChange = useCallback((newSort: SortOption) => {
-    if (activeTab === 'novedades') {
+    if (showNovedades && allProductsCache) {
       setSort(newSort)
       setCurrentPage(1)
       return
@@ -198,12 +214,12 @@ export default function CatalogPage({
     const params = new URLSearchParams()
     if (selectedCategory) params.set('category', selectedCategory)
     if (newSort !== 'newest') params.set('sort', newSort)
-    router.push(`${pathname}?${params.toString()}`)
-  }, [activeTab, selectedCategory, pathname, router])
+    startTransition(() => { router.push(`${pathname}?${params.toString()}`) })
+  }, [showNovedades, allProductsCache, selectedCategory, pathname, router, startTransition])
 
   const handlePageChange = useCallback((page: number) => {
     if (page < 1 || page > totalPages || page === currentPage) return
-    if (activeTab === 'novedades') {
+    if (showNovedades && allProductsCache) {
       setCurrentPage(page)
       catalogRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       return
@@ -225,51 +241,82 @@ export default function CatalogPage({
     if (selectedCategory) params.set('category', selectedCategory)
     if (sort !== 'newest') params.set('sort', sort)
     if (page > 1) params.set('page', String(page))
-    router.push(`${pathname}?${params.toString()}`)
-  }, [activeTab, currentPage, totalPages, selectedCategory, sort, pathname, router])
+    startTransition(() => { router.push(`${pathname}?${params.toString()}`) })
+  }, [showNovedades, allProductsCache, currentPage, totalPages, selectedCategory, sort, pathname, router, startTransition])
 
-  const handleTabChange = useCallback((tab: TabType) => {
-    if (tab === activeTab) return
-    if (tab === 'todos') {
-      setAllProductsCache(null)
-    }
-    setActiveTab(tab)
-    setCurrentPage(1)
-    setError(null)
-  }, [activeTab])
+  const displayTotal = showNovedades && allProductsCache
+    ? displayedProducts.length
+    : total
 
-  const displayTotal = activeTab === 'novedades' ? displayedProducts.length : total
+  const categoryData = selectedCategory
+    ? categories.find(c => c.value === selectedCategory) ?? null
+    : null
+
+  const defaultHeroImage = initialProducts[0]?.image
+  const DEFAULT_HERO_GRADIENT = 'linear-gradient(135deg, #1B7A6C, #E85D45)'
+
+  const defaultHeroDesc = useMemo(() => {
+    const names = categories
+      .map(c => c.label.toLowerCase())
+      .filter(n => n !== 'otros')
+    if (names.length === 0) return 'Los mejores productos importados seleccionados para ti'
+    const last = names.pop()
+    if (names.length === 0) return `Los mejores productos importados seleccionados para ti — ${last} y más`
+    return `Los mejores productos importados seleccionados para ti — ${names.join(', ')} y ${last}`
+  }, [categories])
+
+  const heroBg = categoryData?.image
+    ? `url(${categoryData.image})`
+    : defaultHeroImage
+      ? `url(${defaultHeroImage})`
+      : DEFAULT_HERO_GRADIENT
+
+  const heroLabel = categoryData?.label ?? 'Productos'
+  const heroDesc = categoryData?.description ?? defaultHeroDesc
 
   return (
     <>
-      <section className="hero-section">
-        <h1 className="hero-title">Productos en tendencia</h1>
-        <p className="hero-subtitle">Los mejores productos importados seleccionados para ti — belleza, tecnología, hogar, infantil y más</p>
+      {isPending && <div className="ssr-loading-bar" aria-hidden="true" />}
+      <nav className="breadcrumb catalog-breadcrumb">
+        <Link href="/" className="breadcrumb-item">Inicio</Link>
+        <svg className="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        {categoryData ? (
+          <>
+            <Link href="/productos" className="breadcrumb-item">Productos</Link>
+            <svg className="breadcrumb-separator" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+            <span className="breadcrumb-current">{categoryData.label}</span>
+          </>
+        ) : (
+          <span className="breadcrumb-current">Productos</span>
+        )}
+      </nav>
+
+      <section className="catalog-hero has-bg" style={{ backgroundImage: heroBg }}>
+        <h1 className="catalog-hero-title">{heroLabel}</h1>
+        <p className="catalog-hero-desc">{heroDesc}</p>
       </section>
 
-      <div className="tab-bar">
+      <div className="catalog-controls">
+        {loading && categories.length === 0
+          ? <CategoryChipsSkeleton />
+          : <CategoryChips
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={handleCategoryChange}
+            />
+        }
         <button
-          className={`tab-item ${activeTab === 'todos' ? 'active' : ''}`}
-          onClick={() => handleTabChange('todos')}
+          className={`novedades-toggle${showNovedades ? ' active' : ''}`}
+          onClick={handleNovedadesToggle}
+          aria-pressed={showNovedades}
         >
-          Todos ({total > 0 ? total : '...'})
-        </button>
-        <button
-          className={`tab-item ${activeTab === 'novedades' ? 'active' : ''}`}
-          onClick={() => handleTabChange('novedades')}
-        >
-          Novedades ({newCount})
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2l2.4 7.2H22l-6 4.8 2.4 7.2L12 16l-6.4 4.8L8 14l-6-4.8h7.6z"/>
+          </svg>
+          Solo novedades
+          {newCount > 0 && <span className="novedades-count">{newCount}</span>}
         </button>
       </div>
-
-      {loading && categories.length === 0
-        ? <CategoryChipsSkeleton />
-        : <CategoryChips
-            categories={categories}
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
-          />
-      }
 
       <div className="catalog-layout">
         <div ref={catalogRef} className="catalog-main">

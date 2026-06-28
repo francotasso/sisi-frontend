@@ -8,6 +8,7 @@ export interface CategoryOption {
   value: string
   label: string
   description?: string
+  image?: string
 }
 
 interface UseCatalogResult {

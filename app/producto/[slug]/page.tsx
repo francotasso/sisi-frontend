@@ -138,6 +138,7 @@ export default async function ProductPage({ params }: Props) {
         product={product}
         relatedProducts={relatedFiltered}
         currentProductCategory={categorySlug}
+        allProducts={relatedProducts}
       />
     </>
   )

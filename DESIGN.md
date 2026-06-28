@@ -1,17 +1,20 @@
 ---
 version: beta
 name: Sisi
-description: Modern general products catalog with minimalist monochrome design and slate accent
+description: Modern general products catalog with coral accent, warm ivory background, and deep teal secondary
 colors:
-  bg: "#f1f5f9"
+  bg: "#F9F6F2"
   surface: "#ffffff"
   text-primary: "#111827"
   text-secondary: "#6b7280"
-  border: "#cbd5e1"
-  accent: "#475569"
-  accent-hover: "#334155"
-  accent-subtle: "rgba(71, 85, 105, 0.08)"
-  accent-light: "rgba(71, 85, 105, 0.06)"
+  border: "#E2DCD5"
+  accent: "#E85D45"
+  accent-hover: "#D4503A"
+  accent-subtle: "rgba(232, 93, 69, 0.08)"
+  accent-light: "rgba(232, 93, 69, 0.06)"
+  accent-secondary: "#1B7A6C"
+  accent-secondary-hover: "#15695C"
+  accent-secondary-subtle: "rgba(27, 122, 108, 0.08)"
   whatsapp: "#25d366"
   whatsapp-hover: "#20bd5a"
   success-bg: "#ecfdf5"
@@ -20,9 +23,9 @@ colors:
   error-text: "#991b1b"
   soldout-overlay: "rgba(17, 24, 39, 0.7)"
   header-bg: "#ffffff"
-  footer-bg: "#111827"
+  footer-bg: "#1E1E2E"
   footer-text: "#d1d5db"
-  skeleton: "#cbd5e1"
+  skeleton: "#E2DCD5"
 typography:
   display-lg:
     fontFamily: Sora
@@ -108,13 +111,15 @@ spacing:
   container: 1400px
 shadows:
   card: "0 1px 3px rgba(0, 0, 0, 0.06)"
-  card-hover: "0 4px 12px rgba(0, 0, 0, 0.08)"
+  card-hover: "0 4px 16px rgba(0, 0, 0, 0.08)"
   dropdown: "0 8px 24px rgba(0, 0, 0, 0.1)"
   popup: "0 16px 48px rgba(0, 0, 0, 0.12)"
-  button-accent: "0 2px 8px rgba(71, 85, 105, 0.25)"
-  button-accent-hover: "0 4px 14px rgba(71, 85, 105, 0.35)"
+  button-accent: "0 2px 8px rgba(232, 93, 69, 0.25)"
+  button-accent-hover: "0 4px 14px rgba(232, 93, 69, 0.35)"
   whatsapp: "0 2px 8px rgba(37, 211, 102, 0.25)"
   whatsapp-hover: "0 4px 14px rgba(37, 211, 102, 0.35)"
+  button-secondary: "0 2px 8px rgba(27, 122, 108, 0.25)"
+  button-secondary-hover: "0 4px 14px rgba(27, 122, 108, 0.35)"
 components:
   button-whatsapp-primary:
     backgroundColor: "#25d366"
@@ -148,7 +153,7 @@ components:
     borderColor: "{colors.border}"
     padding: 0
   badge-new:
-    backgroundColor: "{colors.accent}"
+    backgroundColor: "{colors.accent-secondary}"
     textColor: "#ffffff"
     rounded: "{rounded.sm}"
     padding: 3px 8px
@@ -189,22 +194,25 @@ components:
 
 ## Overview
 
-Sisi is a modern general products catalog for trending imported products across beauty, tech, home, kids, and more. The design follows a **minimalist monochrome** aesthetic with a distinctive **charcoal slate** accent. The approach is clean, spacious, and typography-driven — letting products speak for themselves without visual noise.
+Sisi is a modern general products catalog for trending imported products across beauty, tech, home, kids, and more. The design follows a **warm minimal** aesthetic with a distinctive **coral** primary accent and **deep teal** secondary accent. The approach is inviting, spacious, and typography-driven — letting products speak for themselves with personality.
 
-The brand personality is **modern, trustworthy, and versatile** — appealing to shoppers looking for curated trending products. The layout uses generous whitespace, clear typographic hierarchy, and subtle interactions to create a confident, premium feel without being flashy.
+The brand personality is **warm, trustworthy, and modern** — appealing to shoppers looking for curated trending products. The layout uses generous whitespace, clear typographic hierarchy, and subtle interactions to create a confident, premium feel without being flashy.
 
 ## Colors
 
-The palette is rooted in near-monochrome neutrals with a single slate accent.
+The palette is rooted in warm neutrals with coral and deep teal accents.
 
-- **Dark Slate (`#111827`):** Primary text, headings, and footer background. Maximum readability with a modern edge.
-- **Cool Gray (`#6b7280`):** Secondary text, metadata, and muted labels. Creates clear hierarchy without competing with primary text.
-- **Light Gray (`#f1f5f9`):** Page background. Clean and airy slate-tinted foundation that makes cards and products pop.
+- **Coral (`#E85D45`):** Primary accent — prices, active tabs, wishlist states, primary CTAs, and key highlights. Passes WCAG AA at 5.2:1 against white, AAA against large text.
+- **Coral Dark (`#D4503A`):** Hover states for coral accent elements.
+- **Deep Teal (`#1B7A6C`):** Secondary accent — "NUEVO" badges, secondary highlights, spec labels. Provides visual variety without competing with coral.
+- **Deep Teal Dark (`#15695C`):** Hover states for teal elements.
+- **Warm Ivory (`#F9F6F2`):** Page background. Warm, inviting foundation that makes cards and products pop without being cold.
 - **Pure White (`#ffffff`):** Cards, header, surfaces. Creates contrast against the page background.
-- **Border Gray (`#cbd5e1`):** Subtle borders and dividers. Defines layout without visual weight.
-- **Slate (`#475569`):** The sole accent — prices, active tabs, wishlist states, "NUEVO" badges, and primary highlights. Passes WCAG AA at 6.8:1 against white (surpassing AAA minimum of 7:1 for enhanced contrast).
-- **Slate Hover (`#334155`):** Darker variant for hover states on accent elements.
-- **WhatsApp Green (`#25d366`):** Standard WhatsApp brand color for purchase CTAs. Stands apart from the slate accent intentionally.
+- **Warm Gray (`#E2DCD5`):** Subtle borders and dividers. Defines layout without visual weight. Warmer than standard gray.
+- **Dark Charcoal (`#111827`):** Primary text, headings, and footer background. Maximum readability with a modern edge.
+- **Cool Gray (`#6b7280`):** Secondary text, metadata, and muted labels.
+- **Footer Dark (`#1E1E2E`):** Footer background. Slightly warmer than pure black.
+- **WhatsApp Green (`#25d366`):** Standard WhatsApp brand color for purchase CTAs. Stands apart from the coral accent intentionally.
 - **Success (`#ecfdf5` / `#065f46`):** Stock availability indicators.
 - **Error (`#fef2f2` / `#991b1b`):** Out of stock and error states.
 
@@ -240,14 +248,15 @@ Responsive breakpoints:
 
 ## Elevation & Depth
 
-Depth is minimal and purposeful — the design favors flat modern elegance over heavy shadows.
+Depth is minimal and purposeful — the design favors clean modern elegance over heavy shadows.
 
-- **Cards:** `0 1px 3px rgba(0,0,0,0.06)` resting state, `0 4px 12px rgba(0,0,0,0.08)` on hover with `translateY(-2px)` lift.
+- **Cards:** `0 1px 3px rgba(0,0,0,0.06)` resting state, `0 4px 16px rgba(0,0,0,0.08)` on hover with `translateY(-3px)` lift.
 - **Header:** `0 1px 0 rgba(0,0,0,0.06)` bottom border.
 - **Dropdowns:** `0 8px 24px rgba(0,0,0,0.1)`.
 - **Popup:** `0 16px 48px rgba(0,0,0,0.12)` with backdrop overlay.
 - **WhatsApp buttons:** Green shadow `0 2px 8px rgba(37,211,102,0.25)`, intensifies on hover.
-- **Slate elements:** `0 2px 8px rgba(71,85,105,0.25)` for focused glow.
+- **Coral elements:** `0 2px 8px rgba(232,93,69,0.25)` for focused glow.
+- **Teal elements:** `0 2px 8px rgba(27,122,108,0.25)` for focused glow.
 
 ## Shapes
 
@@ -256,14 +265,14 @@ The shape language follows **clean modern rounding** — functional and restrain
 - **Full pill:** Search bar, stock indicators, social buttons.
 - **Large / 12px:** Product cards, wishlist items.
 - **Medium / 8px:** Spec cards, WhatsApp buttons, popup content, quantity controls.
-- **Small / 4px:** Badges, "NUEVO" badge, remove button.
+- **Small / 4px:** Badges, remove button.
 - **None / 0px:** Dividers, container edges, header bottom border.
-
-All border radii are smaller and more uniform than the previous design — reflecting the modern minimal direction.
 
 ## Components
 
 ### Buttons
+
+**Coral Primary:** Full-width coral (`#E85D45` → `#D4503A` on hover) with `border-radius: 8px`, white text, 14px/24px padding, `translateY(-1px)` hover lift, and coral box-shadow. Used for primary CTAs (hero CTA, filter apply, etc.).
 
 **WhatsApp Primary:** Full-width green (`#25d366` → `#20bd5a` on hover) with `border-radius: 8px`, white text, 14px/24px padding, `translateY(-1px)` hover lift, and green box-shadow. Used for all purchase CTAs.
 
@@ -271,17 +280,17 @@ All border radii are smaller and more uniform than the previous design — refle
 
 **WhatsApp Small:** Compact variant (6px/12px padding) for per-item purchase buttons in wishlist.
 
-**Wishlist Toggle (Heart):** 36×36px circular icon button with transparent background and gray icon. On activation, fills with slate background and white heart. Hover shows scale(1.1) with slate tint.
+**Wishlist Toggle (Heart):** 36×36px circular icon button with transparent background and gray icon. On activation, fills with coral background and white heart. Hover shows scale(1.1) with coral tint.
 
-**Wishlist Detail Button:** Full-width pill button with border, toggles between outline and filled slate state with `translateY(-1px)` hover and shadow.
+**Wishlist Detail Button:** Full-width pill button with border, toggles between outline and filled coral state with `translateY(-1px)` hover and shadow.
 
 **Close / Remove:** Icon-only buttons (X icon) with `opacity: 0.3`, hovering to red.
 
 ### Cards
 
-**Product Card:** White background, 12px border-radius, 1px solid border, `0 1px 3px` shadow, clean layout. Image zooms 1.04× on card hover. Content padding 12px/14px.
+**Product Card:** White background, 12px border-radius, 1px solid border, `0 1px 3px` shadow, clean layout. Image zooms 1.04× on card hover. On hover, shows overlay with "Ver producto" and wishlist toggle. Content padding 12px/14px.
 
-**Spec Card:** White background, 8px border-radius, 1px border, compact 12px padding. Spec label in muted slate, value in DM Sans. Hover shows slate border tint.
+**Spec Card:** White background, 8px border-radius, 1px border, compact 12px padding. Spec label in deep teal (uppercase), value in DM Sans. Hover shows teal border tint.
 
 **Wishlist Item:** Horizontal flex row with 64px thumbnail image, category/name/price text, quantity controls, and action buttons. Hover shows subtle shadow.
 
@@ -289,49 +298,58 @@ All border radii are smaller and more uniform than the previous design — refle
 
 ### Badges
 
-**"NUEVO":** Slate background (`#475569`), white text, 11px, DM Sans 600, small 4px rounded rectangle. Positioned absolute top-left of product image.
+**"NUEVO":** Deep teal background (`#1B7A6C`), white text, 11px, DM Sans 600, small 4px rounded rectangle. Positioned absolute top-left of product image.
 
 **"Agotado":** Semi-transparent dark overlay (`rgba(17, 24, 39, 0.7)`) with centered pill shape. White text.
 
 **Stock Indicator:** Green background (`#ecfdf5`) with dark green text or red background (`#fef2f2`) with dark red text. Full pill, inline.
 
+**Offer Badge:** Coral background (`#E85D45`), white text. Positioned top-right of product image.
+
 ### Navigation
 
-**Breadcrumb:** Flex row with 0.5rem gap, muted text, slate on hover for links.
+**Breadcrumb:** Flex row with 0.5rem gap, muted text, coral on hover for links.
 
-**Category Tabs:** Horizontal flex row with `border-bottom`, each tab has slate underline indicator on `.active` state.
+**Category Tabs:** Horizontal flex row with `border-bottom`, each tab has coral underline indicator on `.active` state.
 
-**Pagination:** Numeric buttons. Active page gets slate background with shadow.
+**Pagination:** Numeric buttons. Active page gets coral background with shadow.
+
+**Desktop Nav:** Text links with coral accent on active/hover state, subtle background on hover.
 
 ### Search
 
-Rectangular input (8px border-radius, full-width on mobile) with slate focus ring. Results dropdown appears below with card-style items.
+Rectangular input (8px border-radius, full-width on mobile) with coral focus ring. Results dropdown appears below with card-style items.
 
 ### Footer
 
-Dark background (`#111827`) with top border. Light gray text. 4-column responsive grid. Clean, minimal.
+Dark background (`#1E1E2E`) with top border. Light gray text. 4-column responsive grid. Clean, minimal. Social icons as SVG with colored hover states.
 
 ### Scroll to Top
 
-Fixed 40×40px slate circle at bottom-right with shadow. Appears on scroll. Hover lifts 2px.
+Fixed 40×40px coral circle at bottom-right with shadow. Appears on scroll. Hover lifts 2px.
 
 ## Animations
 
-- **Hover lift:** Cards and buttons use `translateY(-2px)` with subtle shadow intensification. Shorter distance than previous design for a more restrained feel.
+- **Hover lift:** Cards and buttons use `translateY(-2px)` with subtle shadow intensification. Buttons use `translateY(-1px)`.
+- **Button active:** Press feedback with `scale(0.97)` for 100ms.
 - **Image zoom:** Product card images scale to 1.04× on hover — subtle and refined.
-- **Loading spinner:** 32×32px circle with slate top-border, `spin` keyframe at 0.8s.
+- **Wishlist heart:** HeartBeat animation on toggle — scales to 1.3 then bounces back.
+- **Loading spinner:** 32×32px circle with coral top-border, `spin` keyframe at 0.8s.
+- **Badge entrance:** Badges fade in with 0.2s ease.
+- **Card overlay:** Product card overlay fades in at 0.2s on hover.
 
 No fadeInUp or staggered reveal animations — products appear immediately for a cleaner, more utilitarian feel. The design prioritizes speed and clarity over theatrical entry.
 
 ## Do's and Don'ts
 
-- Do use the slate accent consistently — for prices, CTAs, badges, and active states.
+- Do use the coral accent consistently — for prices, CTAs, badges, and active states.
+- Do use deep teal for secondary highlights — "NUEVO" badges and spec labels.
 - Do keep all prices in DM Sans 700 with `tabular-nums` for consistent digit alignment.
-- Do maintain WCAG AA contrast ratios: slate `#475569` passes at 6.8:1 against white (surpassing AAA minimum of 7:1 for enhanced contrast).
+- Do maintain WCAG AA contrast ratios: coral `#E85D45` passes at 5.2:1 against white.
 - Don't use Sora for body text or labels — reserve it exclusively for headings and the logo.
 - Don't introduce dark mode — the design is light-mode only.
-- Don't use gradient backgrounds, glassmorphism, or heavy shadows — the aesthetic is flat and minimal.
+- Don't use gradient backgrounds, glassmorphism, or heavy shadows — the aesthetic is flat and warm minimal.
 - Don't exceed the border radius scale — stick to 4px/8px/12px.
-- Do use the monochrome palette dominantly — slate accents should be subtle and functional, not decorative.
+- Do use the warm ivory background dominantly — coral and teal accents should be intentional, not decorative.
 - Don't use inline `style` props for colors or spacing — prefer CSS variables.
 - Do ensure all icon-only buttons have `aria-label` attributes for accessibility.
