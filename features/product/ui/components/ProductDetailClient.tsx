@@ -138,7 +138,7 @@ export default function ProductDetailClient({
               <span className={`product-detail-stock-badge ${product.stock ? 'inStock' : 'outOfStock'}`}>
                 {product.stock ? '✓ En stock' : '✕ Agotado'}
               </span>
-              {catalogService.isNewProduct(product.createdAt) && (
+              {catalogService.isNewProduct(product) && (
                 <span className="product-detail-stock-badge badge-new">Nuevo</span>
               )}
               {product.bestSeller && (
